@@ -1,0 +1,17 @@
+This file should contain the details of your classes, common variables being used, defined, session variables
+cookie variables and basic flow of the code.
+To add on, include the flow from JSP:Action name to Struts.xml Controller/Action
+definition and to Tiles.xml definition
+
+
+Use the files that you need and create others that you need
+For the files/pages which you think somebody else has created for testing purpose but belongs to you then
+create your new files. Inform the concerned person about the new file so that he can make changes to your file
+for the dependent work.
+
+!!!!Use Proper Naming Conventions!!!!
+
+JSP/Class name  -- Capital letter first
+
+Variables -- lower case letter for first word and upper case for other words.
+!!!!!!!!

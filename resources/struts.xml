@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+   "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="true"></constant>
+	<constant name="struts.multipart.maxSize" value="1000000" />
+	<package name="mystruts" extends="tiles-default, json-default">
+
+		<action name="loadFlipkart">
+			<result type="tiles">/showFlipkart.tiles</result>
+		</action>
+
+		<action name="loadProducts" class="edu.iiitb.controller.ShowProductList">
+			<result type="tiles">/showProductList.tiles</result>
+		</action>
+
+		<action name="showProduct" class="edu.iiitb.controller.ShowProduct">
+			<result type="tiles">/showProduct.tiles</result>
+		</action>
+
+		<action name="displayCart" class="edu.iiitb.controller.DisplayCart"
+			method="displayCart">
+			<result name="success" type="json" />
+		</action>
+
+		<action name="addCart" class="edu.iiitb.controller.DisplayCart"
+			method="addDisplayCart">
+			<result name="success" type="json" />
+		</action>
+		<action name="deleteCart" class="edu.iiitb.controller.DisplayCart"
+			method="deleteDisplayCart">
+			<result name="success" type="json" />
+		</action>
+
+		<action name="editCart" class="edu.iiitb.controller.DisplayCart"
+			method="editDisplayCart">
+			<result name="success" type="json" />
+		</action>
+		<action name="login" method="execute" class="edu.iiitb.controller.LoginAction">
+			<result name="admin">/admin.jsp</result>
+			<result name="customer">/index.jsp</result>
+			<result name="error">/MainHeader.jsp</result>
+		</action>
+		<action name="logout" method="execute" class="edu.iiitb.controller.Logout">
+			<result name="success">/index.jsp</result>
+		</action>
+
+
+
+		<action name="showcatlist" class="edu.iiitb.controller.ShowCategories"
+			method="execute">
+			<result name="success">/categories.jsp</result>
+		</action>
+
+
+		<action name="addCat" class="edu.iiitb.controller.AddCategory"
+			method="execute">
+			<result name="success">/enterCat.jsp</result>
+		</action>
+
+
+		<action name="addProd" class="edu.iiitb.controller.AddProduct"
+			method="execute">
+			<result name="success">/enterProd.jsp</result>
+		</action>
+
+
+		<action name="insertCat" class="edu.iiitb.controller.InsertCategory"
+			method="execute">
+			<result name="success">/admin.jsp</result>
+		</action>
+
+		<action name="insertProd" class="edu.iiitb.controller.InsertProduct"
+			method="execute">
+			<result name="success">/admin.jsp</result>
+		</action>
+
+		<action name="addaddress" class="edu.iiitb.controller.DeliveryAddressAction"
+			method="execute">
+			<result name="success">/success.jsp</result>
+		</action>
+
+		<action name="creditcard" class="edu.iiitb.controller.CardCredentialsAction"
+			method="execute">
+			<result name="success">/success.jsp</result>
+			<result name="failure">/failure.jsp</result>
+		</action>
+
+		<action name="debitcard" class="edu.iiitb.controller.CardCredentialsAction"
+			method="execute">
+			<result name="success">/success.jsp</result>
+			<result name="failure">/failure.jsp</result>
+		</action>
+
+		<action name="placeorder" class="edu.iiitb.controller.GetBanksAction"
+			method="execute">
+			<result name="success">/order.jsp</result>
+
+		</action>
+		<action name="login_action" class="edu.iiitb.controller.OrderLogin"
+			method="execute">
+			<result name="success">/success.jsp</result>
+			<result name="failure">/failure.jsp</result>
+
+		</action>
+
+		<action name="makepayment" method="execute">
+			<result>/success.jsp</result>
+
+		</action>
+
+		<action name="productDetails">
+			<result type="tiles">/showProduct.tiles</result>
+
+		</action>
+
+		<action name="deleteproduct" class="edu.iiitb.controller.Wishlist"
+			method="removeWishlistProd">
+			<result name="success" type="tiles">/DisplayWishlist.tiles</result>
+		</action>
+
+		<action name="displaywishlist" class="edu.iiitb.controller.Wishlist"
+			method="DisplayWishlist">
+			<result name="success" type="tiles">/DisplayWishlist.tiles</result>
+		</action>
+
+		<action name="deleteproduct" class="edu.iiitb.controller.Wishlist"
+			method="removeWishlistProd">
+			<result name="success" type="tiles">/DisplayWishlist.tiles</result>
+		</action>
+
+
+		<action name="showHomePage" class="edu.iiitb.controller.MainPage"
+			method="execute">
+			<result name="success" type="tiles">/showHomePage.tiles</result>
+		</action>
+		<action name="browse" class="edu.iiitb.controller.ShowProductList">
+			<result name="success" type="tiles">/showProductList.tiles</result>
+		</action>
+		<action name="search" class="edu.iiitb.controller.Search">
+			<result name="success" type="tiles">/showProductList.tiles</result>
+		</action>
+
+		<action name="wishlistadd" class="edu.iiitb.controller.Wishlist"
+			method="WishlistItemInsert">
+			<result type="json" />
+		</action>
+
+	</package>
+
+</struts>

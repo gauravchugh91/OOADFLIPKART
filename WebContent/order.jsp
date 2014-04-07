@@ -10,6 +10,12 @@
 <link rel="stylesheet" type="text/css"
 	href="assets/css/smoothness/jquery-ui-1.10.4.custom.css">
 <link rel="stylesheet" type="text/css" href="assets/css/creditcard.css">
+
+<link rel="stylesheet" type="text/css"
+	href="assets/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css"
+	href="assets/css/bootstrap.min.css">
+	
 <script src="assets/js/jquery.js"></script>
 <script src="assets/js/jquery-ui-1.10.4.custom.min.js"></script>
 
@@ -56,7 +62,41 @@
 	width: 40em;
 }
 </style>
+<style type="text/css">
+.product {
+	border-style: solid;
+	border-width: 2px;
+	cursor: pointer;
+	font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+	font-weight: 10px;
+	line-height: 10px;
+	margin: 0 0 1.25rem;
+	position: relative;
+	text-decoration: none;
+	text-align: center;
+	display: inline-block;
+	padding-top: 1rem;
+	padding-right: 2rem;
+	padding-bottom: 1.0625rem;
+	padding-left: 2rem;
+	font-size: 1rem;
+	background-color: #008cba;
+	border-color: #cccccc;
+	color: white;
+	-webkit-transition: background-color 300ms ease-out;
+	-moz-transition: background-color 300ms ease-out;
+	transition: background-color 300ms ease-out;
+	font-size: 1rem;
+}
 
+.product:hover{
+text-decoration:none !important;
+border-style: solid;
+border-width: 2px;
+border-color: #ffd700;	
+}
+
+</style>
 <script>
   $(function() {
     $( "#accordion" ).accordion();
@@ -199,12 +239,31 @@ $(document).ready(
 		</h2>
 		<div>
 			DELIVERY ADDRESS
+			<div class="container">
+			<s:iterator value="addr" status="userStatus">
+				<div class="container col-md-4">
+								<a class="product">
+								<br><label>Name:</label>	<s:property value="name"/>
+									
+								<br><label>Address:</label>	
+								<br><s:property value="address" />
+								<br>	<s:property value="city" />
+								<br>	<s:property value="state" />
+								<br>	<s:property value="country" />
+								<br>	<s:property value="pincode" />
+								<br><label>Phone:</label>	<s:property value="phone" />
+							</a>
+							
+					</div>
+							</s:iterator>
+			</div>
+			
 			<div>
 			<button id="load" style="height: 25px; width: 400px">+ Add New Address</button>
 				<!-- <input type="button" id="load" value="+ Add New Address"> -->
 			</div>
 			<div id="add1">
-				<h2>Address</h2>
+				
 			</div>
 		</div>
 
@@ -234,8 +293,8 @@ $(document).ready(
 					<form action="makepayment">
 						<s:select headerKey="-1" headerValue="Select BANK" list="bank"
 							name="semester" cssStyle="width:150px" />
-						<br> <br> <input id="paycard" type="submit"
-							value="MAKE PAYMENT" />
+						<br> <br> 
+							<button id="paycard" style="height: 25px; width: 400px">MAKE PAYMENT</button>
 					</form>
 				</div>
 
@@ -286,9 +345,13 @@ $(document).ready(
 									class="full gr-input" required="required" /></li>
 
 								<li class="expire last"><label>EXPIRY DATE (VALID
-										THRU)</label> <input type="text" name="expireMonth" value="MM"
-									size="10" class="month gr-input" required="required" /> <input
-									type="text" name="expireYear" value="YY" size="10"
+										THRU)</label>
+										
+										<input type="text" name="expireMonth" value="MM"
+									size="10" class="month gr-input" required="required" />
+									
+									 <input
+									type="text" name="expireYear" value="YYYY" size="10"
 									class="year gr-input" required />
 									<div class="clearfix"></div></li>
 								<li class="cvc-code last"><label>CVC Code</label> <input

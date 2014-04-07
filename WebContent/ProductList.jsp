@@ -8,9 +8,9 @@
 <title>Product list</title>
 
 <style type="text/css">
-.button {
+.product {
 	border-style: solid;
-	border-width: 0px;
+	border-width: 2px;
 	cursor: pointer;
 	font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 	font-weight: normal;
@@ -26,22 +26,26 @@
 	padding-left: 2rem;
 	font-size: 1rem;
 	background-color: #008cba;
-	border-color: #007095;
+	border-color: #cccccc;
 	color: white;
 	-webkit-transition: background-color 300ms ease-out;
 	-moz-transition: background-color 300ms ease-out;
 	transition: background-color 300ms ease-out;
-	padding-top: 1rem;
-	padding-right: 2rem;
-	padding-bottom: 1.0625rem;
-	padding-left: 2rem;
 	font-size: 1rem;
 }
+
+.product:hover{
+text-decoration:none !important;
+border-style: solid;
+border-width: 2px;
+border-color: #ffd700;	
+}
+
 </style>
 </head>
 <body>
 
-<div style="float:right ;width:100%; background-color:lightgrey;">
+<div style="float:right ;width:100%; background-color:#cccccc;">
 
 <div style="float:left ;width:20%;">
 <ul>
@@ -61,7 +65,7 @@
 			
 				<div class="container col-md-4">
 				
-					<a class="button"
+					<a class="product"
 						href="showProduct?productId=<s:property value="productId" />">
 				<img src="http://lorempixel.com/140/140/" alt="340x340" height="80" width="80">
 						<s:property value="productId" /> : <s:property

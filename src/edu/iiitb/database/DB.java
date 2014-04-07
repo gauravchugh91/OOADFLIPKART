@@ -4,11 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
+
+
 import edu.iiitb.dbconfig.DBConnection;
 import edu.iiitb.model.Attribute;
 import edu.iiitb.model.CardCredentials;
 import edu.iiitb.model.Cart;
 import edu.iiitb.model.CartItem;
+import edu.iiitb.model.DeliveryAddress;
 import edu.iiitb.model.Product;
 import edu.iiitb.model.ProductEAV;
 import edu.iiitb.model.UserWho;
@@ -613,7 +617,7 @@ public class DB {
 		return returnval;
 
 	}
-
+/******************** Chirag Saraiya *************************************/
 	public static void AddDeliveryAddress(int userid, String name,
 			String address, String city, String state, String country,
 			int pincode, String email, int phone) {
@@ -742,7 +746,48 @@ public class DB {
 		}
 
 	}
-
+	public static void getAddress(ArrayList<DeliveryAddress> addr)
+	{
+		System.out.println("Addresss.....");
+		Connection con;
+		try {
+			con = DBConnection.getDBConnection();
+		int userid=1; //temp variable..need to get it from session
+			String query1="select name,address,city,state,country,pincode,email,phone from address where address.userid=? ";
+			PreparedStatement ps1 = (PreparedStatement) con.prepareStatement(query1);
+			ps1.setInt(1, userid);
+	
+			
+			ResultSet resultSet = ps1.executeQuery();
+			if (resultSet.next()) {
+				DeliveryAddress d=new DeliveryAddress();
+				
+				d.setName(resultSet.getString("name"));
+				d.setAddress(resultSet.getString("address"));
+				d.setCity(resultSet.getString("city"));
+				d.setState(resultSet.getString("state"));
+				d.setCountry(resultSet.getString("country"));
+				d.setPincode(resultSet.getInt("pincode"));
+				d.setEmail(resultSet.getString("email"));
+				d.setPhone(resultSet.getInt("phone"));
+				
+				
+				addr.add(d);
+				
+			}
+		
+			con.close();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		
+	}
+		}
+	
+/**********************************************************************************/	
 	public static UserWho whoIsLogin(String email, String password) {
 		Connection con;
 		UserWho user = new UserWho();

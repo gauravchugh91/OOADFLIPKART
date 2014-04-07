@@ -241,7 +241,9 @@ $(document).ready(
 			DELIVERY ADDRESS
 			<div class="container">
 			<s:iterator value="addr" status="userStatus">
+			<center>
 				<div class="container col-md-4">
+				
 								<a class="product">
 								<br><label>Name:</label>	<s:property value="name"/>
 									
@@ -255,7 +257,9 @@ $(document).ready(
 							</a>
 							
 					</div>
+					</center>
 							</s:iterator>
+							
 			</div>
 			
 			<div>

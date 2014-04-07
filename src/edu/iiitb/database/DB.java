@@ -528,25 +528,56 @@ public class DB {
 
 	}
 
+	public static int alreadyExists(String tablename,String field,String value) {
+		Connection con;
+		int exists=0;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select 1 from "+tablename+ " where "+field+ " ='"+value+"'";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				exists = resultSet.getInt("1");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return exists;
+
+	}
 	public static int insertCategory(String cat, int parent) {
 		Connection con;
 		int resultSet = 0;
 		try {
 			con = DBConnection.getDBConnection();
 			int level = DB.CheckLevel(parent);
+			int exists = alreadyExists("category","categoryname",cat);
+			if(exists==0) {
 			if (level == 1) {
 				int inslevel = 2;
+				
+				
 				String query = "insert into category(categoryname,parentid,level) values('"
 						+ cat + "'," + parent + "," + inslevel + ")";
 				PreparedStatement ps = (PreparedStatement) con
 						.prepareStatement(query);
 				resultSet = ps.executeUpdate();
+				
 			} else {
+				
 				String query = "insert into category(categoryname,parentid,level) values('"
 						+ cat + "'," + parent + ",1)";
 				PreparedStatement ps = (PreparedStatement) con
 						.prepareStatement(query);
 				resultSet = ps.executeUpdate();
+			}
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -559,31 +590,73 @@ public class DB {
 		}
 		return resultSet;
 	}
-
-	public static int CheckIfLeaf(int came) {
+	public static int insertProduct(String prodname,String catid,ArrayList<String> atts,ArrayList<String> attnames) {
 		Connection con;
-		int returnval = 0;
-
+		int resultSet = 0;
+		int prodid=0;
+		int exists = DB.alreadyExists("product", "productname", prodname);
+		if(exists==0) {
 		try {
 			con = DBConnection.getDBConnection();
-			String query = "select isleaf from category where categoryid="
-					+ came;
+			String insertProduct = "insert into product(productname,categoryid) values('"+prodname+"',"+catid+")";
+			System.out.println("inserting prod:"+insertProduct);
 			PreparedStatement ps = (PreparedStatement) con
-					.prepareStatement(query);
-			ResultSet resultSet = ps.executeQuery();
-			while (resultSet.next()) {
+					.prepareStatement(insertProduct);
+		    resultSet = ps.executeUpdate();
+		    String getid = "select productid from product where productname = '"+prodname+"' and categoryid="+catid;
+		    System.out.println("getting product id"+ getid);
+		    ResultSet get = ps.executeQuery();
+			while (get.next()) {
 
-				returnval = (resultSet.getInt("isleaf"));
+				prodid = get.getInt("productid");
 
 			}
+			int i=0;
+			for(String attvalue:atts) 
+			{
+				int id = getAttributeId(attnames.get(++i));
+				String query = "insert into producteav(productid,attributeid,attributevalue) values("+prodid+","+id+","+attvalue+")"; 
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(query);
+			    resultSet = ps2.executeUpdate();
+			}
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (came == 0)
-			returnval = 0;
+		}
+		
+		return resultSet;
+	}
+
+	public static int getAttributeId(String came) {
+		Connection con;
+		int returnval = 0;
+
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select attributeid from attribute where attributename='"+came+"'";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+
+				returnval = (resultSet.getInt("attributeid"));
+
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return returnval;
 
 	}

@@ -60,7 +60,7 @@ public class ShowCategories extends ActionSupport {
 	public String execute() throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("clicked is"+clicked_id);
-		isleaf=DB.CheckIfLeaf(clicked_id);
+		
 		level = DB.CheckLevel(clicked_id);
 		if(level==1)
 		cats = DB.getCategories(clicked_id);

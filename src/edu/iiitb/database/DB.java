@@ -13,6 +13,8 @@ import edu.iiitb.model.CardCredentials;
 import edu.iiitb.model.Cart;
 import edu.iiitb.model.CartItem;
 import edu.iiitb.model.DeliveryAddress;
+import edu.iiitb.model.DisplayProd;
+import edu.iiitb.model.Order;
 import edu.iiitb.model.Product;
 import edu.iiitb.model.ProductEAV;
 import edu.iiitb.model.UserWho;
@@ -20,7 +22,7 @@ import edu.iiitb.model.Product;
 import edu.iiitb.model.ProductEAV;
 import edu.iiitb.model.category;
 import edu.iiitb.model.CategoryDetails;
-
+import edu.iiitb.controller.*;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
@@ -473,6 +475,37 @@ public class DB {
 		return cats;
 
 	}
+	public static ArrayList<Order> getOrderList() {
+		Connection con;
+		ArrayList<Order> orderList = new ArrayList<Order>();
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select * from flipkart.order";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				Order o  =  new Order();
+				o.setOrderid(resultSet.getInt("orderid"));
+				o.setAddressid(resultSet.getInt("addressid"));
+				o.setNoofItems(resultSet.getInt("numberofitems"));
+				o.setShipmentcharges(resultSet.getInt("shipmentcharges"));
+				o.setTotalamount(resultSet.getInt("totalamount"));
+				o.setUserid(resultSet.getInt("userid"));
+				o.setOrderdate(resultSet.getDate("orderdate"));
+				orderList.add(o);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return orderList;
+
+	}
 
 	public static ArrayList<String> getProducts(int came) {
 		Connection con;
@@ -599,13 +632,15 @@ public class DB {
 		try {
 			con = DBConnection.getDBConnection();
 			String insertProduct = "insert into product(productname,categoryid) values('"+prodname+"',"+catid+")";
-			System.out.println("inserting prod:"+insertProduct);
+			//System.out.println("inserting prod:"+insertProduct);
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(insertProduct);
 		    resultSet = ps.executeUpdate();
 		    String getid = "select productid from product where productname = '"+prodname+"' and categoryid="+catid;
-		    System.out.println("getting product id"+ getid);
-		    ResultSet get = ps.executeQuery();
+		   // System.out.println("getting product id"+ getid);
+		    PreparedStatement ps2 = (PreparedStatement) con
+					.prepareStatement(getid);
+		    ResultSet get = ps2.executeQuery();
 			while (get.next()) {
 
 				prodid = get.getInt("productid");
@@ -614,11 +649,14 @@ public class DB {
 			int i=0;
 			for(String attvalue:atts) 
 			{
-				int id = getAttributeId(attnames.get(++i));
-				String query = "insert into producteav(productid,attributeid,attributevalue) values("+prodid+","+id+","+attvalue+")"; 
-				PreparedStatement ps2 = (PreparedStatement) con
+				String name = attnames.get(++i);
+				int id = getAttributeId(name);
+				
+				String query = "insert into producteav(productid,attributeid,attributevalue) values("+prodid+","+id+","+attvalue+")";
+				//System.out.println("inserting into eav"+query);
+				PreparedStatement ps3 = (PreparedStatement) con
 						.prepareStatement(query);
-			    resultSet = ps2.executeUpdate();
+			    resultSet = ps3.executeUpdate();
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -639,7 +677,7 @@ public class DB {
 
 		try {
 			con = DBConnection.getDBConnection();
-			String query = "select attributeid from attribute where attributename='"+came+"'";
+			String query = "select attributeid from attributes where attributename='"+came+"'";
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
@@ -688,6 +726,45 @@ public class DB {
 		if (came == 0)
 			returnval = 1;
 		return returnval;
+
+	}
+	public static ArrayList<DisplayProd> getThisProd(String prodname) {
+		Connection con;
+	    ArrayList<DisplayProd> sendingThis = new ArrayList<DisplayProd>();
+		int attid=0;
+		String attname;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select attributeid,attributename from attributes";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				 DisplayProd p= new DisplayProd();
+				 attid= (resultSet.getInt("attributeid"));
+				 attname = resultSet.getString("attributename");
+				 String getvalue = "select attributevalue from producteav where productid=(select productid from product where productname='"+prodname+"') and attributeid="+attid;
+				 ps = (PreparedStatement) con
+							.prepareStatement(getvalue);
+				 ResultSet rs = ps.executeQuery();
+				 String attval;
+				 while(rs.next()) {
+					 attval = rs.getString("attributevalue");
+				     p.setAttname(attname);
+				     p.setAttvalue(attval);
+				     sendingThis.add(p);
+				 }
+			}
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sendingThis;
 
 	}
 /******************** Chirag Saraiya *************************************/

@@ -64,7 +64,14 @@
 			method="execute">
 			<result name="success">/enterProd.jsp</result>
 		</action>
-
+        <action name="showproduct_admin" class="edu.iiitb.controller.ShowProdAdmin"
+			method="execute">
+			<result name="success">/showproduct_admin.jsp</result>
+		</action>
+		 <action name="showorderslist" class="edu.iiitb.controller.ShowOrdersAdmin"
+			method="execute">
+			<result name="success">/showordersadmin.jsp</result>
+		</action>
 
 		<action name="insertCat" class="edu.iiitb.controller.InsertCategory"
 			method="execute">

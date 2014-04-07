@@ -212,7 +212,7 @@ $(document).ready(
 			<s:property value="emailid"/>
 			</s:if>
 		<s:else>
-			 <form action="login_action" method="post">
+			 <form action="Orlogin" method="post">
 		
 			<label for="Emailid">Email Address</label>
 			 <input type="text"
@@ -223,8 +223,8 @@ $(document).ready(
 				<input type="password" id="password"
 				name="password" required="required" value="" onfocus="inputFocus(this)"
 				onblur="inputBlur(this)" /> <br /> 
-				<input type="checkbox"
-				name="my_checkbox" value='false'> <label for="Password">I
+				<s:checkbox  name="my_checkbox" value='false'/> 
+ <label for="Password">
 				have flipkart account</label> <br>  
 
 			<button id="1"> Continue</button>
@@ -244,15 +244,15 @@ $(document).ready(
 			<center>
 				<div class="container col-md-4">
 				
-								<a class="product">
+								<a class="product" href="addext?addressid">
 								<br><label>Name:</label>	<s:property value="name"/>
 									
 								<br><label>Address:</label>	
-								<br><s:property value="address" />
-								<br>	<s:property value="city" />
-								<br>	<s:property value="state" />
-								<br>	<s:property value="country" />
-								<br>	<s:property value="pincode" />
+								<br><s:property value="address" />,
+								<br>	<s:property value="city" />,
+								<br>	<s:property value="state" />,
+								<br>	<s:property value="country" />,
+								<br>	<s:property value="pincode" />,
 								<br><label>Phone:</label>	<s:property value="phone" />
 							</a>
 							
@@ -296,7 +296,7 @@ $(document).ready(
 				<div id="tabs-1">
 					<form action="makepayment">
 						<s:select headerKey="-1" headerValue="Select BANK" list="bank"
-							name="semester" cssStyle="width:150px" />
+							name="bank" cssStyle="width:150px" />
 						<br> <br> 
 							<button id="paycard" style="height: 25px; width: 400px">MAKE PAYMENT</button>
 					</form>

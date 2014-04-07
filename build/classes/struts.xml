@@ -98,12 +98,15 @@
 			<result name="success">/order.jsp</result>
 
 		</action>
-		<action name="login_action" class="edu.iiitb.controller.OrderLogin"
+		<action name="Orlogin" class="edu.iiitb.controller.OrderLogin"
 			method="execute">
-			<result name="success">/success.jsp</result>
+			<result name="success">/order.jsp</result>
 			<result name="failure">/failure.jsp</result>
 
 		</action>
+		
+
+
 
 		<action name="makepayment" method="execute">
 			<result>/success.jsp</result>

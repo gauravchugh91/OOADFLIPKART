@@ -746,19 +746,21 @@ public class DB {
 		}
 
 	}
-	public static void getAddress(ArrayList<DeliveryAddress> addr)
+	public static void getAddress(ArrayList<DeliveryAddress> addr,int userid)
 	{
-		System.out.println("Addresss.....");
+		System.out.println("Addresss....."+userid);
 		Connection con;
 		try {
 			con = DBConnection.getDBConnection();
-		int userid=1; //temp variable..need to get it from session
-			String query1="select name,address,city,state,country,pincode,email,phone from address where address.userid=? ";
+		
+			String query1="select name,address,city,state,country,pincode,email,phone from address where userid="+userid;
+			
 			PreparedStatement ps1 = (PreparedStatement) con.prepareStatement(query1);
-			ps1.setInt(1, userid);
+		
 	
 			
 			ResultSet resultSet = ps1.executeQuery();
+			System.out.println("Query"+query1);
 			if (resultSet.next()) {
 				DeliveryAddress d=new DeliveryAddress();
 				
@@ -787,8 +789,45 @@ public class DB {
 	}
 		}
 	
+	
+	public static int Unreguser(String email)
+	{
+		Connection con;
+		int userid=0;
+		try {
+			con = DBConnection.getDBConnection();
+			System.out.println(email);
+			String  query="Insert into customer(email) values('"+email+"')";
+			System.out.println("trying to insert "+query);
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			int rs=ps.executeUpdate();
+			if(rs==1)
+			{
+				query = "select userid from customer where email='"+email+"'";
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(query);
+				ResultSet rs2 = ps2.executeQuery();
+				while(rs2.next())
+				{
+					userid = rs2.getInt("userid");
+				}
+				System.out.println("user id inserted"+userid);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userid;
+	}
+
+	
 /**********************************************************************************/	
-	public static UserWho whoIsLogin(String email, String password) {
+	public static UserWho orderLogin(String email, String password) {
 		Connection con;
 		UserWho user = new UserWho();
 		try {

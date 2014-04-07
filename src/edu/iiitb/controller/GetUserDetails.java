@@ -14,7 +14,17 @@ import edu.iiitb.model.DeliveryAddress;
 public class GetUserDetails {
 	public String isLogin;
 	 String emailid;
-	 private SessionMap<String, Object> sessionMap;
+	 int userid;
+	 public int getUserid() {
+		return userid;
+	}
+
+
+	public void setUserid(int userid) {
+		this.userid = userid;
+	}
+
+	private SessionMap<String, Object> sessionMap;
 		public String getEmailid() {
 			return emailid;
 		}
@@ -43,7 +53,7 @@ public class GetUserDetails {
 			this.sessionMap = sessionMap;
 		}
 		
-	ArrayList<String> bank = new ArrayList<String>();
+	 ArrayList<String> bank = new ArrayList<String>();
 	ArrayList<DeliveryAddress> addr = new ArrayList<DeliveryAddress>();
 	
 	
@@ -73,8 +83,10 @@ public class GetUserDetails {
 			  
 			 if(isLogin.equals("true"))
 			 {
+				 userid=Integer.parseInt(sessionMap.get("userID").toString());
 				emailid=(String) sessionMap.get("email");
-				DB.getAddress(addr);
+				System.out.println("user id="+sessionMap.get("userID"));
+				DB.getAddress(addr,userid);
 			 }
 				}
 			}

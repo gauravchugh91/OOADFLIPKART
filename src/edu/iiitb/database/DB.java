@@ -87,6 +87,7 @@ public class DB {
 			con = DBConnection.getDBConnection();
 			String query = "select * from producteav,attributes where productid=? and "
 					+ "producteav.attributeid=attributes.attributeid";
+			
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ps.setInt(1, productId);
@@ -149,6 +150,7 @@ public class DB {
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(
 					query, Statement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, userId);
+			System.out.println("creating card object"+ps.toString());
 			ps.executeUpdate();
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) {
@@ -243,12 +245,14 @@ public class DB {
 		try {
 			con = DBConnection.getDBConnection();
 			String query = "update cart set userid= ? , totalamount=? , shipmentcharges=? where cartid=?";
+			
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ps.setInt(1, currentCart.getUserId());
 			ps.setInt(2, currentCart.getTotalAmount());
 			ps.setInt(3, currentCart.getShipmentCharges());
 			ps.setInt(4, cartId);
+			System.out.println("update query 1 :"+query);
 			ps.executeUpdate();
 			con.close();
 		} catch (Exception e) {

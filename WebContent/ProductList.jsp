@@ -67,7 +67,13 @@ border-color: #ffd700;
 				
 					<a class="product"
 						href="showProduct?productId=<s:property value="productId" />">
-				<img src="http://lorempixel.com/140/140/" alt="340x340" height="80" width="80">
+						<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+						 
+				<img src="<s:property value="attributeValue"/>" alt="340x340" height="80" width="80">
+				</s:if>
+				
+				</s:iterator>
 						<s:property value="productId" /> : <s:property
 							value="productName" /> <br> <s:iterator value="productEAV">
 							<br>

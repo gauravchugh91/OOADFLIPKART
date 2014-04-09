@@ -17,7 +17,7 @@
 <tr> <th>OrderID</th><th>UserId</th><th>Order date</th><th>No of items</th><th>shipment charges</th><th>total amount payable</th><th>Address</th></tr>
 <s:iterator value="orderList">
 <tr>
-<td><s:property value="orderid"/></td>
+<td><a href="<s:url action="showOrderItem"> <s:param name="orderid"><s:property value="orderid"/></s:param></s:url>"><s:property value="orderid"/></a></td>
 <td><s:property value="userid"/></td>
 <td><s:property value="orderdate"/></td>
 <td><s:property value="noofItems"/></td>

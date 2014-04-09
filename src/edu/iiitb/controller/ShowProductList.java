@@ -84,8 +84,9 @@ public class ShowProductList implements SessionAware {
 		// common code end's
 
 		// User not logged in
-		sessionMap.put("userid", -1);
-
+		//System.out.println("User logged in"+sessionMap.get("userid").toString());
+	    sessionMap.put("userid", -1);
+         
 		// User Logged in
 		// sessionMap.put("userid", 1);
 		if (!(sessionMap.get("userid").equals(-1))) {

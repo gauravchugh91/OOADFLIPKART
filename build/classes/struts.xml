@@ -52,7 +52,10 @@
 			method="execute">
 			<result name="success">/categories.jsp</result>
 		</action>
-
+        <action name="showOrderItem" class="edu.iiitb.controller.ShowOrderItem"
+			method="execute">
+			<result name="success">/showOrderItem.jsp</result>
+		</action>
 
 		<action name="addCat" class="edu.iiitb.controller.AddCategory"
 			method="execute">

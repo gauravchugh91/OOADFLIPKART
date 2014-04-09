@@ -114,7 +114,7 @@ public class ShowProductList implements SessionAware {
 		}
 
 		products = new ArrayList<Product>();
-		products = DB.getProducts();
+		products = DB.getProductsList(category);
 		for (int i = 0; i < products.size(); i++) {
 			products.get(i).setProductEAV(
 					DB.getProductAttributes(products.get(i).getProductId()));

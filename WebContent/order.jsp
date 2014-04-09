@@ -11,11 +11,10 @@
 	href="assets/css/smoothness/jquery-ui-1.10.4.custom.css">
 <link rel="stylesheet" type="text/css" href="assets/css/creditcard.css">
 
+<link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
-	href="assets/css/bootstrap.css">
-	<link rel="stylesheet" type="text/css"
 	href="assets/css/bootstrap.min.css">
-	
+
 <script src="assets/js/jquery.js"></script>
 <script src="assets/js/jquery-ui-1.10.4.custom.min.js"></script>
 
@@ -89,13 +88,12 @@
 	font-size: 1rem;
 }
 
-.product:hover{
-text-decoration:none !important;
-border-style: solid;
-border-width: 2px;
-border-color: #ffd700;	
+.product:hover {
+	text-decoration: none !important;
+	border-style: solid;
+	border-width: 2px;
+	border-color: #ffd700;
 }
-
 </style>
 <script>
   $(function() {
@@ -125,7 +123,10 @@ $(document).ready(
 				if (!clicked.hasClass("ui-state-disabled")) {
 					this._std_clickHandler(event, target);
 				}
-			};
+			};--%>
+			$("#accordion").accordion({
+				header : ".accClass"
+			});
 			
 			accordion._std_clickHandler = accordion._clickHandler;
 
@@ -159,7 +160,7 @@ $(document).ready(
 
 			$("#4").click(function() {
 				alert("Authenticate and Redirect to next page");
-			}); --%>
+			}); 
 
 					
 		});
@@ -175,7 +176,7 @@ $(document).ready(
 </script>
 
 <!-- Accordian   Disable script-->
- 
+
 <!--Script for Email  in first  Accordian-->
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -193,9 +194,30 @@ $(document).ready(
 			}
 		});
 
+		$(".product").click(function() {
+			
+						var addID = $(this).find( ".addrid" ).html();
+						
+						$.ajax({
+							type : 'POST',
+							url : 'exadd?addressid='+addID,
+							
+						});
+
+					});		
 	});
 </script>
+<!-- 
+<script>
 
+$('#ff').form({
+    success:function(data){
+        $.messager.alert('Info', data, 'info');
+    }
+});
+
+</script>
+ -->
 </head>
 <body>
 
@@ -209,28 +231,24 @@ $(document).ready(
 		<div>
 			EMAIL ID
 			<s:if test="isLogin=='true'">
-			<s:property value="emailid"/>
+				<s:property value="emailid" />
 			</s:if>
-		<s:else>
-			 <form action="Orlogin" method="post">
-		
-			<label for="Emailid">Email Address</label>
-			 <input type="text"
-				id="emailid" name="email" required  value="" onfocus="inputFocus(this)"
-				onblur="inputBlur(this)" /><br> 
-				<label for="Password"
-				id="label">Password</label>
-				<input type="password" id="password"
-				name="password" required="required" value="" onfocus="inputFocus(this)"
-				onblur="inputBlur(this)" /> <br /> 
-				<s:checkbox  name="my_checkbox" value='false'/> 
- <label for="Password">
-				have flipkart account</label> <br>  
+			<s:else>
+				<form id="ff" action="Orlogin" method="post">
 
-			<button id="1"> Continue</button>
-			 <!-- <input type="submit" id="1" value="Continue" /> -->
-			</form>
-			</s:else> 
+					<label for="Emailid">Email Address</label> <input type="text"
+						id="emailid" name="email" required value=""
+						onfocus="inputFocus(this)" onblur="inputBlur(this)" /><br> <label
+						for="Password" id="label">Password</label>
+						 <input type="password" id="password" name="password" value=""
+						onfocus="inputFocus(this)" onblur="inputBlur(this)" /> <br />
+					<s:checkbox name="my_checkbox" value='false' />
+					<label for="Password"> I have flipkart account</label> <br>
+
+					<button id="1">Continue</button>
+					<!-- <input type="submit" id="1" value="Continue" /> -->
+				</form>
+			</s:else>
 		</div>
 
 
@@ -240,45 +258,44 @@ $(document).ready(
 		<div>
 			DELIVERY ADDRESS
 			<div class="container">
-			<s:iterator value="addr" status="userStatus">
-			<center>
-				<div class="container col-md-4">
-				
-								<a class="product" href="addext?addressid">
-								<br><label>Name:</label>	<s:property value="name"/>
-									
-								<br><label>Address:</label>	
-								<br><s:property value="address" />,
-								<br>	<s:property value="city" />,
-								<br>	<s:property value="state" />,
-								<br>	<s:property value="country" />,
-								<br>	<s:property value="pincode" />,
-								<br><label>Phone:</label>	<s:property value="phone" />
-							</a>
+				<s:iterator value="addr" status="userStatus">
+					<center>
+						<div class="container col-md-4">
+
+							<div class="product">
+						 		<br>
+							<label>Name:</label> <s:property value="name" /> <br>
+							<label>Address:</label> 
+							<br>
+							<div class="addrid"><s:property value="addressid"/></div><br/>
 							
-					</div>
+							<s:property value="address" />, <br> <s:property
+									value="city" />, <br> <s:property value="state" />, <br>
+								<s:property value="country" />, <br> <s:property
+									value="pincode" />, <br>
+							<label>Phone:</label> <s:property value="phone" />
+							
+						
+						</div>
+
+						</div>
 					</center>
-							</s:iterator>
-							
+				</s:iterator>
 			</div>
-			
+
 			<div>
-			<button id="load" style="height: 25px; width: 400px">+ Add New Address</button>
+				<button id="load" style="height: 25px; width: 400px">+ Add
+					New Address</button>
 				<!-- <input type="button" id="load" value="+ Add New Address"> -->
 			</div>
-			<div id="add1">
-				
-			</div>
+			<div id="add1"></div>
 		</div>
 
 
 		<h2 id="section3" class="accClass">
 			<a href="#">3. ORDER SUMMARY</a>
 		</h2>
-		<div>
-			ORDER SUMMARY 
-
-		</div>
+		<div>ORDER SUMMARY</div>
 		<h2 id="section4" class="accClass">
 			<a href="#">4. PAYMENT METHOD</a>
 		</h2>
@@ -297,8 +314,9 @@ $(document).ready(
 					<form action="makepayment">
 						<s:select headerKey="-1" headerValue="Select BANK" list="bank"
 							name="bank" cssStyle="width:150px" />
-						<br> <br> 
-							<button id="paycard" style="height: 25px; width: 400px">MAKE PAYMENT</button>
+						<br> <br>
+						<button id="paycard" style="height: 25px; width: 400px">MAKE
+							PAYMENT</button>
 					</form>
 				</div>
 
@@ -328,7 +346,8 @@ $(document).ready(
 									required="required" /></li>
 								<div class="clearfix"></div>
 							</ul>
-								<button id="paycard" style="height: 25px; width: 400px"> PAY</button>
+							<button id="paycard" style="height: 25px; width: 400px">
+								PAY</button>
 							<!-- <input id="paycard" type="submit" value="PAY" /> -->
 
 
@@ -349,12 +368,8 @@ $(document).ready(
 									class="full gr-input" required="required" /></li>
 
 								<li class="expire last"><label>EXPIRY DATE (VALID
-										THRU)</label>
-										
-										<input type="text" name="expireMonth" value="MM"
-									size="10" class="month gr-input" required="required" />
-									
-									 <input
+										THRU)</label> <input type="text" name="expireMonth" value="MM"
+									size="10" class="month gr-input" required="required" /> <input
 									type="text" name="expireYear" value="YYYY" size="10"
 									class="year gr-input" required />
 									<div class="clearfix"></div></li>
@@ -367,7 +382,8 @@ $(document).ready(
 									required="required" /></li>
 								<div class="clearfix"></div>
 							</ul>
-							<button id="paycard" style="height: 25px; width: 400px"> PAY</button>
+							<button id="paycard" style="height: 25px; width: 400px">
+								PAY</button>
 							<!-- <input id="paycard" type="submit" value="PAY" /> -->
 
 

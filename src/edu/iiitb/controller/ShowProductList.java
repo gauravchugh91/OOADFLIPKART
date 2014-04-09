@@ -84,12 +84,16 @@ public class ShowProductList implements SessionAware {
 		// common code end's
 
 		// User not logged in
-		sessionMap.put("userid", -1);
-
+		//System.out.println("User logged in"+sessionMap.get("userid").toString());
+	    sessionMap.put("userid", -1);
+         
 		// User Logged in
 		// sessionMap.put("userid", 1);
+		System.out.println("Im'm here 1");
 		if (!(sessionMap.get("userid").equals(-1))) {
+			System.out.println("Im'm here 2");
 			if (!(sessionMap.containsKey("cartid"))) {
+				System.out.println("Im'm here 3");
 				// insert cart row into the cart table, get cart id and then put
 				// it in session.
 				int cartid = DB.createCart((int) (sessionMap.get("userid")));
@@ -113,7 +117,7 @@ public class ShowProductList implements SessionAware {
 		}
 
 		products = new ArrayList<Product>();
-		products = DB.getProducts();
+		products = DB.getProductsList(category);
 		for (int i = 0; i < products.size(); i++) {
 			products.get(i).setProductEAV(
 					DB.getProductAttributes(products.get(i).getProductId()));

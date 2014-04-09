@@ -76,9 +76,13 @@
 			</div>
 			<div style="float: left; width: 50%;">
 
-				<img src="http://lorempixel.com/140/140/" alt="340x340" height="350"
-					width="350">
+			<s:iterator value="product.productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" alt="340x340" height="80" width="80">
+				</s:if>
+				</s:iterator>
 
+                
 			</div>
 
 		</div>

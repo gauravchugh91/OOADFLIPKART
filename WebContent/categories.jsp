@@ -21,7 +21,7 @@
 <h3> Products </h3>
 <s:iterator value="products">
 
-<li><s:property /></li></s:iterator> </ul>
+<li><a href="<s:url action="showproduct_admin"> <s:param name="prod_name"><s:property /></s:param></s:url>"> <s:property/></a></li></s:iterator> </ul>
 <h3><a href="<s:url action="addProd"> <s:param name="clicked_id"><s:property value="clicked_id"/></s:param></s:url>">Add Product</a></h3>
 </s:else>
 

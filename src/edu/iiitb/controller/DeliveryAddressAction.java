@@ -8,6 +8,8 @@ import java.util.Map;
 
 
 
+
+
 import com.opensymphony.xwork2.ActionContext;
 
 import edu.iiitb.database.DB;
@@ -79,13 +81,18 @@ public class DeliveryAddressAction  {
 	}
 	
 public String execute() throws Exception {
-	//Map<String, Object> sessionMap = ActionContext.getContext()
-		//	.getSession();
-	//if (sessionMap.containsKey("userid")) {
+	Map<String, Object> sessionMap = ActionContext.getContext().getSession();
+	
+	if (sessionMap.containsKey("userid")) {
+		userid=Integer.parseInt(sessionMap.get("userID").toString());
+		email=(String) sessionMap.get("email");
 		DB.AddDeliveryAddress(userid,name,address,city,state,country,pincode,email,phone);
 		
 		return "success";
-	//} else
-	//	return "error";
-}
+	} else
+	{	
+		DB.AddDeliveryAddress(-1,name,address,city,state,country,pincode,email,phone);
+		return "success";
+	}
+	}
 }

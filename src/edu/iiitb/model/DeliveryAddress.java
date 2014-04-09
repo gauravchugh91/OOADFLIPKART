@@ -1,7 +1,8 @@
 package edu.iiitb.model;
 
 public class DeliveryAddress {
-
+	int addressid;
+	
 	int userid;
 	String name;
 	String address;
@@ -11,6 +12,17 @@ public class DeliveryAddress {
 	int pincode;
 	String email;
 	int phone;
+	
+	
+	
+	public int getAddressid() {
+		return addressid;
+	}
+	public void setAddressid(int addressid) {
+		this.addressid = addressid;
+	}
+	
+	
 	public int getUserid() {
 		return userid;
 	}

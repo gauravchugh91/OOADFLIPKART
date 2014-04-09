@@ -97,6 +97,10 @@ a:HOVER {
 <!-- 
 				
  -->
+ <script type="text/javascript">
+ 
+ 
+ </script>
 <body>
 	<div class="page-container">
 		<div class="navbar navbar-inverse navbar-fixed-top "
@@ -106,7 +110,7 @@ a:HOVER {
 				<div id="topHeaderContentDiv" class="container">
 					<div class="navbar-header col-md-3">
 						<a class="navbar-right" style="padding-top: 5%"
-							href="loadProducts"><img src="assets/images/flip.png" /></a>
+							href="showHomePage"><img src="assets/images/flip.png" /></a>
 					</div>
 					<div class="container col-md-8 " id="search">
 						<s:if test="isLoggedIn==1">
@@ -136,13 +140,16 @@ a:HOVER {
 								<ul class="fk-font-12 navbar-right link-list">
 									<li><a href="aboutUs"> 24x7 Customer Care </a></li>
 									<li><a href="trackOrder">Track Order</a></li>
-									<li><a href="signup">SignUp</a></li>
+									<li><a href="#" class="sign">SignUp</a></li>
+
 									<li><a href="#" class="log" data-toggle="modal"
 										data-target="#LoginModal">Login</a></li>
 								</ul>
 							</div>
 						</s:else>
+						<form action="search" method=post>
 						<div id="searchIconDiv" style="margin-top: 5px;">
+						
 							<div class="container col-md-8" style="background-color: white">
 								<img src="assets/images/searchicon.jpg"
 									style="width: 19px; height: 19px;" /> <input type="text"
@@ -150,12 +157,13 @@ a:HOVER {
 									placeholder="Search for a product, category or brand"
 									autofocus="autofocus" />
 							</div>
-							<input class="searchButton" type="submit" value="Search" /> <input
-								type="submit" class="btn btn-sm btn-primary cartbutton"
+							<input class="searchButton" type="submit" value="Search" />
+							
+							 <input type="submit" class="btn btn-sm btn-primary cartbutton"
 								data-toggle="modal" data-target="#cartHome" id="btnCart"
 								value="CART" />
-
 						</div>
+						</form>
 					</div>
 				</div>
 			</div>
@@ -215,6 +223,56 @@ a:HOVER {
 		</div>
 	</div>
 
+<div id="SignUpModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">SIGN UP!</h4>
+            </div>
+           
+            <div >
+                
+                <form name = "SignUpform" action="signup" method="post">
+                <table>
+                <tr>
+                
+                   <td>  <label for="email">Enter Email :</label></td>
+                   <td>  <input type="text" name="email"/></td>
+                               <br/><br/>
+                </tr>
+                <tr><td>  </td><td> </td></tr>
+                <tr><td> </td><td> </td></tr>
+                <tr>
+                   
+                   <td> <label for="assign_password">Enter Password :</label></td>
+                   <td><input type="password" name ="assign_password"/></td>
+                 
+                </tr>   
+                   <br/><br/>
+                <tr><td>  </td><td> </td></tr>
+                <tr><td> </td><td> </td></tr>
+                <tr>   
+                
+                   <td> <label for="reTypePass">Retype Password :</label></td>
+                   <td><input type="password" name ="reTypePass"/></td>
+                
+                </tr>
+                <tr><td> </td><td>  </td></tr>
+                <tr><td> </td><td>  </td></tr>
+                </table>   
+                  <input type="submit" class="btn btn-primary" value="Sign Up!"/>
+                </form>
+                
+            </div> 
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 	<div class="modal fade" id="cartHome" tabindex="-1">
 		<div class="modal-dialog" style="width: 900px; height: 500px;">
 			<div class="modal-content" style="height: 500px;">
@@ -252,6 +310,16 @@ a:HOVER {
 	<script src="assets/js/bootstrap-hover-dropdown.js"></script>
 
 	<script>
+	
+	$(document).ready(function(){
+		 $('a.sign').click(function() {
+				$("#SignUpModal").modal('show');
+			});
+		 });
+		 
+	
+	
+	
 		$('.js-activated').dropdownHover().dropdown();
 		// 		$('a.log').click(function() {
 		// 			$("#LoginModal").modal('show');

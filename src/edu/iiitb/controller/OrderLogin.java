@@ -1,6 +1,10 @@
 package edu.iiitb.controller;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import org.apache.struts2.dispatcher.SessionMap;
+import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -9,10 +13,21 @@ import edu.iiitb.model.DeliveryAddress;
 import edu.iiitb.model.UserWho;
 
 
-public class OrderLogin extends ActionSupport{
+public class OrderLogin extends ActionSupport implements SessionAware {
 	public String email;
 	public String password;
 	ArrayList<DeliveryAddress> addr;
+	private SessionMap<String, Object> sessionMap;
+
+	public SessionMap<String, Object> getSessionMap() {
+		return sessionMap;
+	}
+
+	public void setSessionMap(SessionMap<String, Object> sessionMap) {
+		this.sessionMap = sessionMap;
+	}
+	
+	
 	public ArrayList<DeliveryAddress> getAddr() {
 		return addr;
 	}
@@ -21,9 +36,6 @@ public class OrderLogin extends ActionSupport{
 	public void setAddr(ArrayList<DeliveryAddress> addr) {
 		this.addr = addr;
 	}
-
-
-
 
 	String isLogin;
 	String emailid;
@@ -108,9 +120,15 @@ public class OrderLogin extends ActionSupport{
 			System.out.println(sysUser.getUserID() +"***"+sysUser.getPassword());
 		
 			if (sysUser.equals(null)){
+				addActionError("Incorrect email address/password.");	
 				return "failure";
-				// addActionError("Incorrect email address/password.");	
+				// 
 			}else {
+				
+				sessionMap.put("login", "true");
+				sessionMap.put("email", sysUser.getEmail());
+				sessionMap.put("userID", sysUser.getUserID());
+				
 				DB.getAddress(addr,sysUser.getUserID());
 				emailid=sysUser.getEmail();
 				isLogin="true";
@@ -120,9 +138,11 @@ public class OrderLogin extends ActionSupport{
 		}
 		else
 		{
-
+System.out.println("check box");
 			//insert into customer
 			int userid = DB.Unreguser(email);
+			emailid="email";
+		
 			System.out.println("********" +userid);
 			return "success";
 		}
@@ -130,4 +150,12 @@ public class OrderLogin extends ActionSupport{
 		
 	}
 
+	@Override
+	public void setSession(Map<String, Object> arg0) {
+		sessionMap = (SessionMap) arg0;
+
+	}
+	
+	
+	
 }

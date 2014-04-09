@@ -116,8 +116,9 @@ public class DisplayCart {
 	public String addDisplayCart() throws Exception {
 		Map<String, Object> sessionMap = ActionContext.getContext()
 				.getSession();
-		System.out.println("lalalalalal");
+		//System.out.println("lalalalalal");
 		int cartId = (int) sessionMap.get("cartid");
+		System.out.println("got cart id as"+cartId);
 		product = new Product();
 		productList = new ArrayList<Product>();
 		cartItems = new ArrayList<CartItem>();
@@ -128,7 +129,7 @@ public class DisplayCart {
 
 		System.out.println("I'm here also in cart");
 		if (!(DB.checkProduct(productId, cartId))) {
-			System.out.println("Inside it");
+			System.out.println("Inside it"+cartId+ " and prodc "+productId) ;
 			DB.setCartItem(product, cartId);
 		}
 

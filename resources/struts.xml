@@ -40,8 +40,19 @@
 		<action name="login" method="execute" class="edu.iiitb.controller.LoginAction">
 			<result name="admin">/admin.jsp</result>
 			<result name="customer">/index.jsp</result>
-			<result name="error">/MainHeader.jsp</result>
+			<result name="error">/index.jsp</result>
 		</action>
+		
+		<action name="signup" method="signUp"
+            class="edu.iiitb.controller.SignUp">
+            <result name="customer">/index.jsp</result>
+            <result name="error">/index.jsp</result>
+       </action>
+		
+		
+		
+		
+		
 		<action name="logout" method="execute" class="edu.iiitb.controller.Logout">
 			<result name="success">/index.jsp</result>
 		</action>
@@ -52,7 +63,10 @@
 			method="execute">
 			<result name="success">/categories.jsp</result>
 		</action>
-
+        <action name="showOrderItem" class="edu.iiitb.controller.ShowOrderItem"
+			method="execute">
+			<result name="success">/showOrderItem.jsp</result>
+		</action>
 
 		<action name="addCat" class="edu.iiitb.controller.AddCategory"
 			method="execute">
@@ -64,7 +78,14 @@
 			method="execute">
 			<result name="success">/enterProd.jsp</result>
 		</action>
-
+        <action name="showproduct_admin" class="edu.iiitb.controller.ShowProdAdmin"
+			method="execute">
+			<result name="success">/showproduct_admin.jsp</result>
+		</action>
+		 <action name="showorderslist" class="edu.iiitb.controller.ShowOrdersAdmin"
+			method="execute">
+			<result name="success">/showordersadmin.jsp</result>
+		</action>
 
 		<action name="insertCat" class="edu.iiitb.controller.InsertCategory"
 			method="execute">
@@ -98,6 +119,14 @@
 			<result name="success">/order.jsp</result>
 
 		</action>
+		 
+		 <action name="exadd" class="edu.iiitb.controller.OrderDetailsAction"
+			method="execute">
+			<result name="success">/order.jsp</result>
+
+		</action>
+		 
+		
 		<action name="Orlogin" class="edu.iiitb.controller.OrderLogin"
 			method="execute">
 			<result name="success">/order.jsp</result>

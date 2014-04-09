@@ -36,7 +36,6 @@ public class DBConnection {
 
 		String sURL = "jdbc:mysql://" + sServerName + ":" + sPort + "/"
 				+ sDatabaseName;
-System.out.println(sURL + "  " + sUserName + "  " + sPassword);
 		conn = (Connection) DriverManager.getConnection(sURL, sUserName, sPassword);
 		return conn;
 	}

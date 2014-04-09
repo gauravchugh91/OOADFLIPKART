@@ -52,17 +52,25 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	public void setSessionMap(SessionMap<String, Object> sessionMap) {
 		this.sessionMap = sessionMap;
 	}
+	public static String isEmailNotValid(String email,String password) {
+		
+		System.out.println("Index of '@' in "+email+" ="+email.indexOf("@"));
+		
+		if((email.indexOf('@')<0 && email.indexOf(".",email.indexOf("@"))<0 ))
+			    {
+				System.out.println("I was executed! 1)");
+				     return "Please specify a VALID Email Address";	    	
+			    }
+		
+		else if(password==null||password==" ")
+			    {
+		            return "Please specify a password";
+		        }
+			  return null;
+		   }
+		
 
-	public static String isEmailValid(String email, String password) {
-
-		if (email == " " || email == null
-				|| email.indexOf('@') < email.indexOf('.')) {
-			return "Please specify a VALID Email Address";
-		} else if (password == null || password == " ") {
-			return "Please specify a password";
-		}
-		return null;
-	}
+	
 
 	public String execute() {
 
@@ -89,7 +97,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 				return "customer";
 			}
 		}
-		msg = isEmailValid(getEmail(), getPassword());
+		msg = isEmailNotValid(getEmail(), getPassword());
 		return "error";
 	}
 

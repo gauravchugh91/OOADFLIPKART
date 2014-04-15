@@ -6,28 +6,45 @@ import java.util.Map;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.SessionAware;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import edu.iiitb.database.DB;
 import edu.iiitb.model.DeliveryAddress;
+import edu.iiitb.model.OrderItem;
 import edu.iiitb.model.UserWho;
+ /* Login action on Place Order Page 
+  * Author: Chirag Saraiya
+  * */
 
-
-public class OrderLogin extends ActionSupport implements SessionAware {
+public class OrderLogin extends ActionSupport  {
 	public String email;
 	public String password;
 	ArrayList<DeliveryAddress> addr;
-	private SessionMap<String, Object> sessionMap;
-
-	public SessionMap<String, Object> getSessionMap() {
-		return sessionMap;
+	
+	ArrayList<OrderItem> orditm =new ArrayList<OrderItem>();
+	int cartid;
+	
+	public int getCartid() {
+		return cartid;
 	}
 
-	public void setSessionMap(SessionMap<String, Object> sessionMap) {
-		this.sessionMap = sessionMap;
+
+	public void setCartid(int cartid) {
+		this.cartid = cartid;
 	}
-	
-	
+
+
+	public ArrayList<OrderItem> getOrditm() {
+		return orditm;
+	}
+
+
+	public void setOrditm(ArrayList<OrderItem> orditm) {
+		this.orditm = orditm;
+	}
+
+
 	public ArrayList<DeliveryAddress> getAddr() {
 		return addr;
 	}
@@ -107,14 +124,23 @@ public class OrderLogin extends ActionSupport implements SessionAware {
 	public String execute()   {
 		String selectionModifier;
 		addr=new ArrayList<DeliveryAddress>();
+		
+		//Here query is written here because Login method takes this as parameter//
+		
+		
 		selectionModifier = " where " + "email = '" + email + "'"
 				+ " and " + "password = '" + password + "'";
-
+		
+		Map<String, Object> sessionMap = ActionContext.getContext().getSession();
+		
+	//int userid=(int)sessionMap.get("userID");
+		
 		System.out.println("I m here");
 		System.out.println(getPassword());
 		System.out.println(getEmail());
 		System.out.println("checked value"+my_checkbox);
 		DB.getBankName(bank);
+		//* checks chek box for existing Users
 		if (my_checkbox==true){
 			UserWho sysUser = DB.whoIsLogin(selectionModifier);
 			System.out.println(sysUser.getUserID() +"***"+sysUser.getPassword());
@@ -124,25 +150,32 @@ public class OrderLogin extends ActionSupport implements SessionAware {
 				return "failure";
 				// 
 			}else {
+				/* Setting userID in session for existing account user on place order page */
 				
-				sessionMap.put("login", "true");
-				sessionMap.put("email", sysUser.getEmail());
 				sessionMap.put("userID", sysUser.getUserID());
-				
+				cartid=(int)sessionMap.get("cartid");
+				DB.getProducts(orditm,cartid);
 				DB.getAddress(addr,sysUser.getUserID());
 				emailid=sysUser.getEmail();
-				isLogin="true";
+				isLogin="true";    //flag to display Login Form on Jsp pages
 				return "success";
 			}
 			
 		}
 		else
-		{
-System.out.println("check box");
+		{ /* For unregistered user */
+			
+			System.out.println("check box");
 			//insert into customer
 			int userid = DB.Unreguser(email);
-			emailid="email";
-		
+			emailid=email;
+			//isLogin="false"; //flag tocheck on JSP whether user is logedin or not
+		// for unregistered user set email session
+			sessionMap.put("unregistered", userid); 
+			/* Getting Cart item for Order Summery page*/
+			cartid=(int)sessionMap.get("cartid");
+			DB.getProducts(orditm,cartid);
+
 			System.out.println("********" +userid);
 			return "success";
 		}
@@ -150,12 +183,27 @@ System.out.println("check box");
 		
 	}
 
-	@Override
-	public void setSession(Map<String, Object> arg0) {
-		sessionMap = (SessionMap) arg0;
-
-	}
 	
 	
 	
 }
+/*
+not logged and placed order
+
+specified email address but not logged in
+	1. account already exists
+	 then you fetch the corresponding user id from given email(unique) 
+	 and set things but make sure he doesn't log in in website ....
+
+	2. account does not exists
+		simply insert entry into Customer table , get user id and perform operations
+
+
+
+
+specified email and logged in
+
+
+
+
+*/

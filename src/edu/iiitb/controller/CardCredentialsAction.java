@@ -50,7 +50,7 @@ public String execute() throws Exception {
 		//	.getSession();
 	//if (sessionMap.containsKey("userid")) {
 		
-		String result=DB.checkUserCredential(cardNumber,expireMonth,expireYear,cvcCode,cardName);
+		String result=DB.checkUserCardCredential(cardNumber,expireMonth,expireYear,cvcCode,cardName);
 		System.out.println(result);
 		return result;
 	//} else

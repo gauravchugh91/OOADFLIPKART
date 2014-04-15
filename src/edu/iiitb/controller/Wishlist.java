@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import edu.iiitb.database.DB;
@@ -80,7 +81,9 @@ public class Wishlist extends ActionSupport {
 
 	public String WishlistInsert() {
 		DB connect = new DB();
-		connect.WishlistInsert(1);
+		Map<String,Object>session=ActionContext.getContext().getSession();
+		System.out.println(session.get("userID").toString());
+		connect.WishlistInsert(Integer.parseInt(session.get("userID").toString()));
 		return "success";
 
 	}
@@ -95,9 +98,10 @@ public class Wishlist extends ActionSupport {
 
 		DB connect = new DB();
 		try {
-			System.out.println("Ankesh_product_id:" + prodId);
-			connect.WishlistItemInsert(prodId, 1);
-			message = "<a class='change1' id='redirect' href='displaywishlist'>Added to Wishlist</a>";
+			  Map<String,Object>session=ActionContext.getContext().getSession();
+			  connect.WishlistItemInsert(prodId,Integer.parseInt(session.get("userID").toString()));
+			  message = "<a class='change1' id='redirect' href='displaywishlist'>Added to Wishlist</a>";
+			
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -110,7 +114,8 @@ public class Wishlist extends ActionSupport {
 
 	public String DisplayWishlist() {
 		DB connect = new DB();
-		prodlist = connect.DisplayWishlist(1);
+		Map<String,Object> session = ActionContext.getContext().getSession();
+		prodlist = connect.DisplayWishlist(Integer.parseInt(session.get("userID").toString()));
 		Iterator itr1 = prodlist.iterator();
 		while (itr1.hasNext()) {
 			WishlistProd wish_prod = new WishlistProd();
@@ -146,8 +151,8 @@ public class Wishlist extends ActionSupport {
 	public String removeWishlistProd() {
 
 		DB connect = new DB();
-
-		connect.RemovefromWishlist(Productid, 1);
+		Map<String,Object> session = ActionContext.getContext().getSession();
+	    connect.RemovefromWishlist(Productid,Integer.parseInt(session.get("userID").toString()));
 		System.out.println("check prod" + Productid);
 		String str = DisplayWishlist();
 

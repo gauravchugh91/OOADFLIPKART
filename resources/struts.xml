@@ -99,7 +99,7 @@
 
 		<action name="addaddress" class="edu.iiitb.controller.DeliveryAddressAction"
 			method="execute">
-			<result name="success">/success.jsp</result>
+			<result name="success">/order.jsp</result>
 		</action>
 
 		<action name="creditcard" class="edu.iiitb.controller.CardCredentialsAction"
@@ -120,8 +120,8 @@
 
 		</action>
 		 
-		 <action name="exadd" class="edu.iiitb.controller.OrderDetailsAction"
-			method="execute">
+		 <action name="existingAdd" class="edu.iiitb.controller.DeliveryAddressAction"
+			method="existingAddress">
 			<result name="success">/order.jsp</result>
 
 		</action>
@@ -133,9 +133,6 @@
 			<result name="failure">/failure.jsp</result>
 
 		</action>
-		
-
-
 
 		<action name="makepayment" method="execute">
 			<result>/success.jsp</result>

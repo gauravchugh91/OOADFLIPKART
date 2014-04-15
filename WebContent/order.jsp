@@ -18,6 +18,7 @@
 <script src="assets/js/jquery.js"></script>
 <script src="assets/js/jquery-ui-1.10.4.custom.min.js"></script>
 
+
 <script>
 	$(function() {
 		$("#tabs").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
@@ -38,7 +39,7 @@
 
 .ui-tabs-vertical .ui-tabs-nav li {
 	clear: left;
-	width: 100%;
+	width: 70%;
 	border-bottom-width: 1px !important;
 	border-right-width: 0 !important;
 	margin: 0 -1px .2em 0;
@@ -62,12 +63,11 @@
 }
 </style>
 <style type="text/css">
-.product {
+.address {
 	border-style: solid;
 	border-width: 2px;
-	cursor: pointer;
 	font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-	font-weight: 10px;
+	font-weight: 30px;
 	line-height: 10px;
 	margin: 0 0 1.25rem;
 	position: relative;
@@ -79,38 +79,42 @@
 	padding-bottom: 1.0625rem;
 	padding-left: 2rem;
 	font-size: 1rem;
-	background-color: #008cba;
+	background-color: #0f92bd;
 	border-color: #cccccc;
-	color: white;
+	color: black;
 	-webkit-transition: background-color 300ms ease-out;
 	-moz-transition: background-color 300ms ease-out;
 	transition: background-color 300ms ease-out;
 	font-size: 1rem;
 }
 
-.product:hover {
+/* .address:hover {
 	text-decoration: none !important;
 	border-style: solid;
 	border-width: 2px;
 	border-color: #ffd700;
+} */
+#accordion {
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
 }
 </style>
 <script>
-  $(function() {
-    $( "#accordion" ).accordion();
-  });
-  </script>
+	$(function() {
+		$("#accordion").accordion();
+	});
+</script>
 <script type="text/javascript">
-$(document).ready(
-		function() {
-			$("#load").click(function(event) {
-				$('#add1').load('add.jsp');
-			});
-			
-			
-			//ACCORDION
+	$(document)
+			.ready(
+					function() {
+						$("#load").click(function(event) {
+							$('#add1').load('add.jsp');
+						});
 
-			<%--$("#accordion").accordion({
+						//ACCORDION
+<%--$("#accordion").accordion({
 				header : ".accClass"
 			});
 			$(".accClass").addClass("ui-state-disabled");
@@ -124,48 +128,46 @@ $(document).ready(
 					this._std_clickHandler(event, target);
 				}
 			};--%>
-			$("#accordion").accordion({
-				header : ".accClass"
-			});
-			
-			accordion._std_clickHandler = accordion._clickHandler;
+	$("#accordion").accordion({
+							header : ".accClass"
+						});
 
-			var $accordion = $("#accordion").accordion();
+						accordion._std_clickHandler = accordion._clickHandler;
 
-			function openNextAccordionPanel() {
+						var $accordion = $("#accordion").accordion();
 
-				var current = $accordion.accordion("option",
-						"active"), maximum = $accordion.find("h2").length, next = current + 1 === maximum ? 0
-						: current + 1;
-				$accordion.accordion("activate", next);
+						function openNextAccordionPanel() {
 
-			}
+							var current = $accordion.accordion("option",
+									"active"), maximum = $accordion.find("h2").length, next = current + 1 === maximum ? 0
+									: current + 1;
+							$accordion.accordion("activate", next);
 
-			$("#section1").removeClass("ui-state-disabled");
+						}
 
-			$("#1").click(function() {
-				$("#section2").removeClass("ui-state-disabled");
-				openNextAccordionPanel();
-			});
+						$("#section1").removeClass("ui-state-disabled");
 
-			$("#2").click(function() {
-				$("#section3").removeClass("ui-state-disabled");
-				openNextAccordionPanel();
-			});
+						$("#1").click(function() {
+						
+							$("#section2").removeClass("ui-state-disabled");
+							openNextAccordionPanel();
+						});
 
-			$("#3").click(function() {
-				$("#section4").removeClass("ui-state-disabled");
-				openNextAccordionPanel();
-			});
+						$("#2").click(function() {
+							$("#section3").removeClass("ui-state-disabled");
+							openNextAccordionPanel();
+						});
 
-			$("#4").click(function() {
-				alert("Authenticate and Redirect to next page");
-			}); 
+						$("#3").click(function() {
+							$("#section4").removeClass("ui-state-disabled");
+							openNextAccordionPanel();
+						});
 
-					
-		});
+						$("#4").click(function() {
+							alert("Authenticate and Redirect to next page");
+						});
 
-
+					});
 </script>
 
 
@@ -179,7 +181,7 @@ $(document).ready(
 
 <!--Script for Email  in first  Accordian-->
 <script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function() {
 
 		$("#password").hide();
 		$("#label").hide();
@@ -194,17 +196,16 @@ $(document).ready(
 			}
 		});
 
-		$(".product").click(function() {
-			
-						var addID = $(this).find( ".addrid" ).html();
-						
-						$.ajax({
-							type : 'POST',
-							url : 'exadd?addressid='+addID,
-							
-						});
+		$("#save").click(function() {
+			var radio_button_value = $(':radio[name=addressid]:checked').val();
+			alert(radio_button_value);
+			$.ajax({
+				type : 'POST',
+				url : 'existingAdd?addressid=' + radio_button_value,
 
-					});		
+			});
+
+		});
 	});
 </script>
 <!-- 
@@ -230,7 +231,7 @@ $('#ff').form({
 		</h2>
 		<div>
 			EMAIL ID
-			<s:if test="isLogin=='true'">
+			<s:if test="userid!=-1">
 				<s:property value="emailid" />
 			</s:if>
 			<s:else>
@@ -239,9 +240,9 @@ $('#ff').form({
 					<label for="Emailid">Email Address</label> <input type="text"
 						id="emailid" name="email" required value=""
 						onfocus="inputFocus(this)" onblur="inputBlur(this)" /><br> <label
-						for="Password" id="label">Password</label>
-						 <input type="password" id="password" name="password" value=""
-						onfocus="inputFocus(this)" onblur="inputBlur(this)" /> <br />
+						for="Password" id="label">Password</label> <input type="password"
+						id="password" name="password" value="" onfocus="inputFocus(this)"
+						onblur="inputBlur(this)" /> <br />
 					<s:checkbox name="my_checkbox" value='false' />
 					<label for="Password"> I have flipkart account</label> <br>
 
@@ -252,41 +253,55 @@ $('#ff').form({
 		</div>
 
 
-		<h2 id="section2" class="accClass">
+		<h2 class="accClass">
 			<a href="#">2. DELIVERY ADDRESS </a>
 		</h2>
-		<div>
+		<div id="section2">
 			DELIVERY ADDRESS
 			<div class="container">
+
 				<s:iterator value="addr" status="userStatus">
 					<center>
 						<div class="container col-md-4">
 
-							<div class="product">
-						 		<br>
-							<label>Name:</label> <s:property value="name" /> <br>
-							<label>Address:</label> 
-							<br>
-							<div class="addrid"><s:property value="addressid"/></div><br/>
-							
-							<s:property value="address" />, <br> <s:property
-									value="city" />, <br> <s:property value="state" />, <br>
-								<s:property value="country" />, <br> <s:property
-									value="pincode" />, <br>
-							<label>Phone:</label> <s:property value="phone" />
-							
-						
-						</div>
+							<div class="address">
+								<br> <label>Name:</label>
+								<s:property value="name" />
+								<br> <label>Address:</label> <br>
+								<%-- 	<div class="addrid"><s:property value="addressid"/></div><br/> --%>
 
+								<s:property value="address" />
+								, <br>
+								<s:property value="city" />
+								, <br>
+								<s:property value="state" />
+								, <br>
+								<s:property value="country" />
+								, <br>
+								<s:property value="pincode" />
+								, <br> <label>Phone:</label>
+								<s:property value="phone" />
+
+							</div>
+
+							<td><s:radio name="addressid" list="#{addressid:''}"
+									theme="simple"></s:radio></td>
 						</div>
 					</center>
 				</s:iterator>
+
+				<s:if test="userid!=-1">
+					<button id="save">Select Existing Address</button>
+				</s:if>
+
+
+
 			</div>
 
 			<div>
 				<button id="load" style="height: 25px; width: 400px">+ Add
 					New Address</button>
-				<!-- <input type="button" id="load" value="+ Add New Address"> -->
+
 			</div>
 			<div id="add1"></div>
 		</div>
@@ -295,7 +310,33 @@ $('#ff').form({
 		<h2 id="section3" class="accClass">
 			<a href="#">3. ORDER SUMMARY</a>
 		</h2>
-		<div>ORDER SUMMARY</div>
+		<div>
+			ORDER SUMMARY:
+
+			<div>
+
+				<s:iterator value="orditm" status="userStatus">
+					<table class='table table-striped'>
+						<thead>
+							<tr>
+
+								<th></th>
+								<th>Product Name</th>
+								<th>Quantity</th>
+								<th>Subtotal</th>
+								<th>DeliveryDetails</th>
+							<tr>
+								<td><img src="<s:property value="imagepath"/>"
+									alt="340x340" height="40" width="60" /></td>
+								<td><s:property value="productname" /></td>
+								<td><s:property value="quantity" /></td>
+								<td><s:property value="subtotal" /></td>
+								<td><s:property value="deliverydetails" /></td>
+							</tr>
+					</table>
+				</s:iterator>
+			</div>
+		</div>
 		<h2 id="section4" class="accClass">
 			<a href="#">4. PAYMENT METHOD</a>
 		</h2>

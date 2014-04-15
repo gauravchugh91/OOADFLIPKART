@@ -8,9 +8,9 @@
 <title>Product list</title>
 
 <style type="text/css">
-.product {
+.button {
 	border-style: solid;
-	border-width: 2px;
+	border-width: 0px;
 	cursor: pointer;
 	font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 	font-weight: normal;
@@ -26,38 +26,42 @@
 	padding-left: 2rem;
 	font-size: 1rem;
 	background-color: #008cba;
-	border-color: #cccccc;
+	border-color: #007095;
 	color: white;
 	-webkit-transition: background-color 300ms ease-out;
 	-moz-transition: background-color 300ms ease-out;
 	transition: background-color 300ms ease-out;
+	padding-top: 1rem;
+	padding-right: 2rem;
+	padding-bottom: 1.0625rem;
+	padding-left: 2rem;
 	font-size: 1rem;
 }
-
-.product:hover{
-text-decoration:none !important;
-border-style: solid;
-border-width: 2px;
-border-color: #ffd700;	
+a:HOVER {
+	text-decoration: none;
+	color: black;
 }
-
 </style>
 </head>
-<body>
+<body style="background-color: #f5f2fc; ">
 
-<div style="float:right ;width:100%; background-color:#cccccc;">
+<div style="float:center ;width:100%; background-color:#ffffff; ">
 
-<div style="float:left ;width:20%;">
+<center><h2>List of Existing Products</h2></center>
+</div>
+<br>
+<div style="float:right ;width:100%;  ">
+
+<div style="float:left ;width:20%; background-color:#ffffff;">
 <ul>
 <s:iterator value="subCategoryList">
-<li><s:property value="categoryName"/></li></s:iterator>
+<li><a href="search?searchBar=<s:property value="categoryName"/>" style="color: black;"><s:property value="categoryName"/></a></li></s:iterator>
 </ul>
 </div>
 	
-	<div style="float:right ;width:80%;">
+	<div style="float:right ;width:77%; background-color:#ffffff; ">
 
 	<center>
-		<h2>List of Existing Products</h2>
 		<br> <br>
 		<div class="container">
 
@@ -65,18 +69,22 @@ border-color: #ffd700;
 			
 				<div class="container col-md-4">
 				
-					<a class="product"
-						href="showProduct?productId=<s:property value="productId" />">
-						<s:iterator value="productEAV">
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
 						<s:if test="attributeName=='Image_Path'"> 
-				<img src="<s:property value="attributeValue"/>" alt="340x340" height="80" width="80">
+				<img src="<s:property value="attributeValue"/>" alt="340x340" height="200" width="160">
 				</s:if>
 				</s:iterator>
-						<s:property value="productId" /> : <s:property
-							value="productName" /> <br> <s:iterator value="productEAV">
+						<br>
+						<br>
+						<font color="#000000" size="3">
+						<b><s:property value="productName" /></font> </b> <br> 
+						<s:iterator value="productEAV">
 							<br>
+							<font color="#000000" size="1.5">
 							<s:property value="attributeName" /> : 
 						<s:property value="attributeValue" />
+						</font>
 						</s:iterator>
 					</a>
 				</div>
@@ -91,7 +99,7 @@ border-color: #ffd700;
 
 
 <!-- 
-<button type="button" class="btn btn-primary"
+<button type="button" clas	s="btn btn-primary"
 					onclick='this.form.action="showProduct?productId=${productId}";'>
 					
 

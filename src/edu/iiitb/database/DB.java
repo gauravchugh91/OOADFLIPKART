@@ -4,19 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
-
-
-
 import edu.iiitb.dbconfig.DBConnection;
 import edu.iiitb.model.Attribute;
 import edu.iiitb.model.CardCredentials;
 import edu.iiitb.model.Cart;
 import edu.iiitb.model.CartItem;
 import edu.iiitb.model.DeliveryAddress;
-import edu.iiitb.model.OrderDetails;
 import edu.iiitb.model.DisplayProd;
 import edu.iiitb.model.Order;
+import edu.iiitb.model.OrderItem;
 import edu.iiitb.model.Product;
 import edu.iiitb.model.ProductEAV;
 import edu.iiitb.model.UserWho;
@@ -25,6 +21,7 @@ import edu.iiitb.model.ProductEAV;
 import edu.iiitb.model.category;
 import edu.iiitb.model.CategoryDetails;
 import edu.iiitb.controller.*;
+
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
@@ -89,7 +86,6 @@ public class DB {
 			con = DBConnection.getDBConnection();
 			String query = "select * from producteav,attributes where productid=? and "
 					+ "producteav.attributeid=attributes.attributeid";
-			
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ps.setInt(1, productId);
@@ -104,6 +100,7 @@ public class DB {
 				productAttributes.add(producteav);
 			}
 			con.close();
+			System.out.println("nuumber of att " + productAttributes.size());
 			return productAttributes;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -143,21 +140,52 @@ public class DB {
 		return null;
 	}
 
+	public static int getCartId(int userId) {
+		int cartId = 0;
+		Connection con;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select cartid from cart where userid=?";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ps.setInt(1, userId);
+			ResultSet resultSet = ps.executeQuery();
+			if (resultSet.next()) {
+				cartId = resultSet.getInt("cartid");
+			}
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cartId;
+	}
+
 	public static int createCart(int userId) {
 		Connection con;
 		int cartId = 0;
+		int count=0;
 		try {
 			con = DBConnection.getDBConnection();
+			/*String query1="select * from cart where userid="+userId;
+			PreparedStatement pr2=(PreparedStatement) con.prepareStatement(query1);
+			ResultSet result=pr2.executeQuery();
+			while(result.next())
+			{
+				count=1;
+			}
+			
+			if(count==0)
+			{*/
 			String query = "insert into cart(userid) values(?)";
 			PreparedStatement ps = (PreparedStatement) con.prepareStatement(
 					query, Statement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, userId);
-			System.out.println("creating card object"+ps.toString());
 			ps.executeUpdate();
 			ResultSet rs = ps.getGeneratedKeys();
 			if (rs.next()) {
 				cartId = rs.getInt(1);
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -247,14 +275,29 @@ public class DB {
 		try {
 			con = DBConnection.getDBConnection();
 			String query = "update cart set userid= ? , totalamount=? , shipmentcharges=? where cartid=?";
-			
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ps.setInt(1, currentCart.getUserId());
 			ps.setInt(2, currentCart.getTotalAmount());
 			ps.setInt(3, currentCart.getShipmentCharges());
 			ps.setInt(4, cartId);
-			System.out.println("update query 1 :"+query);
+			ps.executeUpdate();
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void editCartItem(int productId, int quantity, int cartId) {
+		Connection con;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "update cartitem set quantity= ? , subtotal= price*quantity where cartid=? and productid=?";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ps.setInt(1, quantity);
+			ps.setInt(2, cartId);
+			ps.setInt(3, productId);
 			ps.executeUpdate();
 			con.close();
 		} catch (Exception e) {
@@ -368,8 +411,27 @@ public class DB {
 				con.close();
 				return productList;
 			} else {
-				con.close();
-				return productList;
+				String query2 = "select * from product p, category c1, category c2 where c1.categoryid = p.categoryid and c2.categoryid = c1.parentid and c2.categoryname = '"
+						+ searchName + "'";
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(query2);
+				ResultSet resultSet2 = ps2.executeQuery();
+				if (resultSet2.next()) {
+
+					do {
+						Product product = new Product();
+						product.setProductId(resultSet2.getInt("productid"));
+						product.setProductName(resultSet2
+								.getString("productname"));
+
+						productList.add(product);
+					} while (resultSet2.next());
+					con.close();
+					return productList;
+				} else {
+					con.close();
+					return productList;
+				}
 			}
 		}
 	}
@@ -400,8 +462,8 @@ public class DB {
 	}
 
 	// ruchita's code end
-/********** RISHI**********/
-	
+	/********** RISHI **********/
+
 	public static UserWho addNewAccount(String email, String password) {
 		Connection con;
 		try {
@@ -413,20 +475,18 @@ public class DB {
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(prev_Account);
 			ResultSet resultSet = ps.executeQuery();
-			System.out.println("prev_Account successfully executed!");//+ resultSet.getInt(1));
-			
-			
+			System.out.println("prev_Account successfully executed!");// +
+																		// resultSet.getInt(1));
+
 			String prev_Customer = "select userid from customer where email='"
 					+ email + "'";
 			PreparedStatement cs = (PreparedStatement) con
 					.prepareStatement(prev_Customer);
 			ResultSet resultSet1 = cs.executeQuery();
 			System.out.println("prev_Customer successfully executed!");
-			
-			
-			//User has a flipcart account.
-			
-			
+
+			// User has a flipcart account.
+
 			if (resultSet.next()) {
 				System.out.println("Email already taken by "
 						+ resultSet.getInt(1));
@@ -434,103 +494,106 @@ public class DB {
 				return null;
 			}
 
-			//user is a customer and has purchased something before but does not have an account
-			
+			// user is a customer and has purchased something before but does
+			// not have an account
+
 			else if (resultSet1.next()) {
 				int newId = resultSet1.getInt(1);
 				String loginTableInsert = "insert into usercredentials (userid,email,password)"
-                        + " values ("
-                        + newId
-                       	+ ",'"
-                        + email
-                     	+ "','"
-                        + password + "')";
-                PreparedStatement ps2 = (PreparedStatement) con
-                        .prepareStatement(loginTableInsert,Statement.RETURN_GENERATED_KEYS);
+						+ " values ("
+						+ newId
+						+ ",'"
+						+ email
+						+ "','"
+						+ password
+						+ "')";
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(loginTableInsert,
+								Statement.RETURN_GENERATED_KEYS);
 
-                ps2.executeUpdate();
-                ResultSet newUser = ps2.getGeneratedKeys();
+				ps2.executeUpdate();
+				ResultSet newUser = ps2.getGeneratedKeys();
 
-                UserWho user = new UserWho();
-                if (newUser.next()) {
-	                         user.setUserID(newUser.getInt(1));
-	                         user.setEmail(newUser.getString(2));
-	                         user.setPassword(newUser.getString(3));
-	                         user.setIsAdmin(newUser.getInt(4));
-	                         user.setIsActive(newUser.getInt(5));
-                }
+				UserWho user = new UserWho();
+				if (newUser.next()) {
+					user.setUserID(newUser.getInt(1));
+					user.setEmail(newUser.getString(2));
+					user.setPassword(newUser.getString(3));
+					user.setIsAdmin(newUser.getInt(4));
+					user.setIsActive(newUser.getInt(5));
+				}
 
-               con.close();
-               System.out.println("custTableInsert successfully executed!");
-               return user;
-				
+				con.close();
+				System.out.println("custTableInsert successfully executed!");
+				return user;
+
 			}
-			
-			
-			//new user of the system-never shopped and does not have an account. 
-			
+
+			// new user of the system-never shopped and does not have an
+			// account.
+
 			else {
 				// inserting values first in customer table.
 				String custTableInsert = "INSERT INTO customer (email) VALUES ('"
 						+ email + "')";
-				
-				
-				PreparedStatement ps1 = (PreparedStatement) con.prepareStatement(
-						custTableInsert, Statement.RETURN_GENERATED_KEYS);
+
+				PreparedStatement ps1 = (PreparedStatement) con
+						.prepareStatement(custTableInsert,
+								Statement.RETURN_GENERATED_KEYS);
 				ps1.executeUpdate();
 				ResultSet usID = ps1.getGeneratedKeys();
 				System.out.println("1st insert done! ");
-				     if (usID.next()) {
-				     	int newId = usID.getInt(1);
-				     	System.out.println("value of usID: "+newId);
+				if (usID.next()) {
+					int newId = usID.getInt(1);
+					System.out.println("value of usID: " + newId);
 					// student.setStudent_id(newId);
-			    
-				     	
-				/*PreparedStatement ps1 = (PreparedStatement) con
-						.prepareStatement(custTableInsert);
-				ps1.executeUpdate();
-				System.out.println("1st insert done! ");
-				//2. not executing from here
-				// 'userID' of credentials is the key refering to 'userID of
-				// usercredentials .
-				String newUser = "select userid from customer where"
-						+ " email='" + email + "'";
-				PreparedStatement ps2 = (PreparedStatement) con
-						.prepareStatement(newUser);
 
-				ResultSet usID = ps2.executeQuery();*/
-				
-				     	String loginTableInsert = "insert into usercredentials (userid,email,password)"
-						                        + " values ("
-						                        + newId
-					                           	+ ",'"
-						                        + email
-					                         	+ "','"
-						                        + password + "')";
-				        PreparedStatement ps2 = (PreparedStatement) con
-						                        .prepareStatement(loginTableInsert,Statement.RETURN_GENERATED_KEYS);
-				        
-				        ps2.executeUpdate();
-				        ResultSet newUser = ps2.getGeneratedKeys();
-				        
-				        UserWho user = new UserWho();
-				        if (newUser.next()) {
-				        	user.setUserID(newUser.getInt(1));
-				        	System.out.println(user.getUserID());
-							user.setEmail(newUser.getString(2));
-							System.out.println(user.getEmail());
-							user.setPassword(newUser.getString(3));
-							System.out.println(user.getPassword());
-							user.setIsAdmin(newUser.getInt(4));
-							System.out.println(user.getIsAdmin());
-				        	user.setIsActive(newUser.getInt(5));
-				        	System.out.println(user.getIsAdmin());
-				        }
-				        
-				        con.close();
-				        System.out.println("custTableInsert successfully executed!");
-				        return user;
-			       }
+					/*
+					 * PreparedStatement ps1 = (PreparedStatement) con
+					 * .prepareStatement(custTableInsert); ps1.executeUpdate();
+					 * System.out.println("1st insert done! "); //2. not
+					 * executing from here // 'userID' of credentials is the key
+					 * refering to 'userID of // usercredentials . String
+					 * newUser = "select userid from customer where" +
+					 * " email='" + email + "'"; PreparedStatement ps2 =
+					 * (PreparedStatement) con .prepareStatement(newUser);
+					 * 
+					 * ResultSet usID = ps2.executeQuery();
+					 */
+
+					String loginTableInsert = "insert into usercredentials (userid,email,password)"
+							+ " values ("
+							+ newId
+							+ ",'"
+							+ email
+							+ "','"
+							+ password + "')";
+					PreparedStatement ps2 = (PreparedStatement) con
+							.prepareStatement(loginTableInsert,
+									Statement.RETURN_GENERATED_KEYS);
+
+					ps2.executeUpdate();
+					ResultSet newUser = ps2.getGeneratedKeys();
+
+					UserWho user = new UserWho();
+					if (newUser.next()) {
+						user.setUserID(newUser.getInt(1));
+						System.out.println(user.getUserID());
+						user.setEmail(newUser.getString(2));
+						System.out.println(user.getEmail());
+						user.setPassword(newUser.getString(3));
+						System.out.println(user.getPassword());
+						user.setIsAdmin(newUser.getInt(4));
+						System.out.println(user.getIsAdmin());
+						user.setIsActive(newUser.getInt(5));
+						System.out.println(user.getIsAdmin());
+					}
+
+					con.close();
+					System.out
+							.println("custTableInsert successfully executed!");
+					return user;
+				}
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -544,13 +607,7 @@ public class DB {
 
 		return null;
 	}
-	
-	
-	
-	
-	
-	
-	
+
 	public static UserWho whoIsLogin(String selectionModifier) {
 		Connection con;
 		try {
@@ -631,6 +688,7 @@ public class DB {
 		return cats;
 
 	}
+
 	public static ArrayList<Order> getOrderList() {
 		Connection con;
 		ArrayList<Order> orderList = new ArrayList<Order>();
@@ -641,7 +699,7 @@ public class DB {
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
 			while (resultSet.next()) {
-				Order o  =  new Order();
+				Order o = new Order();
 				o.setOrderid(resultSet.getInt("orderid"));
 				o.setAddressid(resultSet.getInt("addressid"));
 				o.setNoofItems(resultSet.getInt("numberofitems"));
@@ -717,12 +775,13 @@ public class DB {
 
 	}
 
-	public static int alreadyExists(String tablename,String field,String value) {
+	public static int alreadyExists(String tablename, String field, String value) {
 		Connection con;
-		int exists=0;
+		int exists = 0;
 		try {
 			con = DBConnection.getDBConnection();
-			String query = "select 1 from "+tablename+ " where "+field+ " ='"+value+"'";
+			String query = "select 1 from " + tablename + " where " + field
+					+ " ='" + value + "'";
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
@@ -741,37 +800,34 @@ public class DB {
 		return exists;
 
 	}
+
 	public static int insertCategory(String cat, int parent) {
 		Connection con;
 		int resultSet = 0;
 		try {
 			con = DBConnection.getDBConnection();
 			int level = DB.CheckLevel(parent);
-			int exists = alreadyExists("category","categoryname",cat);
-			if(exists==0) {
-			if (level == 1) {
-				int inslevel = 2;
-				
-				
-				String query = "insert into category(categoryname,parentid,level) values('"
-						+ cat + "'," + parent + "," + inslevel + ")";
-				PreparedStatement ps = (PreparedStatement) con
-						.prepareStatement(query);
-				resultSet = ps.executeUpdate();
-				
-			} else {
-				
-				String query = "insert into category(categoryname,parentid,level) values('"
-						+ cat + "'," + parent + ",1)";
-				PreparedStatement ps = (PreparedStatement) con
-						.prepareStatement(query);
-				resultSet = ps.executeUpdate();
-			}
+			int exists = alreadyExists("category", "categoryname", cat);
+			if (exists == 0) {
+				if (level == 1) {
+					int inslevel = 2;
+
+					String query = "insert into category(categoryname,parentid,level) values('"
+							+ cat + "'," + parent + "," + inslevel + ")";
+					PreparedStatement ps = (PreparedStatement) con
+							.prepareStatement(query);
+					resultSet = ps.executeUpdate();
+
+				} else {
+
+					String query = "insert into category(categoryname,parentid,level) values('"
+							+ cat + "'," + parent + ",1)";
+					PreparedStatement ps = (PreparedStatement) con
+							.prepareStatement(query);
+					resultSet = ps.executeUpdate();
+				}
 			}
 
-			
-			
-		
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -780,55 +836,57 @@ public class DB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 		return resultSet;
 	}
-	public static int insertProduct(String prodname,String catid,ArrayList<String> atts,ArrayList<String> attnames) {
+
+	public static int insertProduct(String prodname, String catid,
+			ArrayList<String> atts, ArrayList<String> attnames) {
 		Connection con;
 		int resultSet = 0;
-		int prodid=0;
+		int prodid = 0;
 		int exists = DB.alreadyExists("product", "productname", prodname);
-		if(exists==0) {
-		try {
-			con = DBConnection.getDBConnection();
-			String insertProduct = "insert into product(productname,categoryid) values('"+prodname+"',"+catid+")";
-			//System.out.println("inserting prod:"+insertProduct);
-			PreparedStatement ps = (PreparedStatement) con
-					.prepareStatement(insertProduct);
-		    resultSet = ps.executeUpdate();
-		    String getid = "select productid from product where productname = '"+prodname+"' and categoryid="+catid;
-		   // System.out.println("getting product id"+ getid);
-		    PreparedStatement ps2 = (PreparedStatement) con
-					.prepareStatement(getid);
-		    ResultSet get = ps2.executeQuery();
-			while (get.next()) {
+		if (exists == 0) {
+			try {
+				con = DBConnection.getDBConnection();
+				String insertProduct = "insert into product(productname,categoryid) values('"
+						+ prodname + "'," + catid + ")";
+				// System.out.println("inserting prod:"+insertProduct);
+				PreparedStatement ps = (PreparedStatement) con
+						.prepareStatement(insertProduct);
+				resultSet = ps.executeUpdate();
+				String getid = "select productid from product where productname = '"
+						+ prodname + "' and categoryid=" + catid;
+				// System.out.println("getting product id"+ getid);
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(getid);
+				ResultSet get = ps2.executeQuery();
+				while (get.next()) {
 
-				prodid = get.getInt("productid");
+					prodid = get.getInt("productid");
 
+				}
+				int i = 0;
+				for (String attvalue : atts) {
+					String name = attnames.get(++i);
+					int id = getAttributeId(name);
+
+					String query = "insert into producteav(productid,attributeid,attributevalue) values("
+							+ prodid + "," + id + "," + attvalue + ")";
+					// System.out.println("inserting into eav"+query);
+					PreparedStatement ps3 = (PreparedStatement) con
+							.prepareStatement(query);
+					resultSet = ps3.executeUpdate();
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			int i=0;
-			for(String attvalue:atts) 
-			{
-				String name = attnames.get(++i);
-				int id = getAttributeId(name);
-				
-				String query = "insert into producteav(productid,attributeid,attributevalue) values("+prodid+","+id+","+attvalue+")";
-				//System.out.println("inserting into eav"+query);
-				PreparedStatement ps3 = (PreparedStatement) con
-						.prepareStatement(query);
-			    resultSet = ps3.executeUpdate();
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		}
-		
+
 		return resultSet;
 	}
 
@@ -838,7 +896,8 @@ public class DB {
 
 		try {
 			con = DBConnection.getDBConnection();
-			String query = "select attributeid from attributes where attributename='"+came+"'";
+			String query = "select attributeid from attributes where attributename='"
+					+ came + "'";
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
@@ -855,7 +914,7 @@ public class DB {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return returnval;
 
 	}
@@ -889,10 +948,11 @@ public class DB {
 		return returnval;
 
 	}
+
 	public static ArrayList<DisplayProd> getThisProd(String prodname) {
 		Connection con;
-	    ArrayList<DisplayProd> sendingThis = new ArrayList<DisplayProd>();
-		int attid=0;
+		ArrayList<DisplayProd> sendingThis = new ArrayList<DisplayProd>();
+		int attid = 0;
 		String attname;
 		try {
 			con = DBConnection.getDBConnection();
@@ -901,22 +961,22 @@ public class DB {
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
 			while (resultSet.next()) {
-				 DisplayProd p= new DisplayProd();
-				 attid= (resultSet.getInt("attributeid"));
-				 attname = resultSet.getString("attributename");
-				 String getvalue = "select attributevalue from producteav where productid=(select productid from product where productname='"+prodname+"') and attributeid="+attid;
-				 ps = (PreparedStatement) con
-							.prepareStatement(getvalue);
-				 ResultSet rs = ps.executeQuery();
-				 String attval;
-				 while(rs.next()) {
-					 attval = rs.getString("attributevalue");
-				     p.setAttname(attname);
-				     p.setAttvalue(attval);
-				     sendingThis.add(p);
-				 }
+				DisplayProd p = new DisplayProd();
+				attid = (resultSet.getInt("attributeid"));
+				attname = resultSet.getString("attributename");
+				String getvalue = "select attributevalue from producteav where productid=(select productid from product where productname='"
+						+ prodname + "') and attributeid=" + attid;
+				ps = (PreparedStatement) con.prepareStatement(getvalue);
+				ResultSet rs = ps.executeQuery();
+				String attval;
+				while (rs.next()) {
+					attval = rs.getString("attributevalue");
+					p.setAttname(attname);
+					p.setAttvalue(attval);
+					sendingThis.add(p);
+				}
 			}
-			
+
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -928,12 +988,14 @@ public class DB {
 		return sendingThis;
 
 	}
-/******************** Chirag Saraiya *************************************/
+
+	/******************** Chirag Saraiya *************************************/
+
+	// For Adding new address//
 	public static void AddDeliveryAddress(int userid, String name,
 			String address, String city, String state, String country,
 			int pincode, String email, int phone) {
-	
-		
+
 		Connection con;
 		try {
 			con = DBConnection.getDBConnection();
@@ -941,22 +1003,24 @@ public class DB {
 			 * since user id is a foreign key which refers to customer there for
 			 * we have to fill customer table first
 			 */
-			if(userid==-1)
-			{
-			String query ="select userid from customer where email='"+email+"'";
-			PreparedStatement ps2 = (PreparedStatement) con
-					.prepareStatement(query);
-			ResultSet rs2 = ps2.executeQuery();
-			while(rs2.next())
-			{
-				userid = rs2.getInt("userid");
-			}
-			}
+			// userid is -1 for non loggedin user...
+			/*if (userid == -1) {
+				
+				String query = "select userid from customer where email='"
+						+ email + "'";
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(query);
+				ResultSet rs2 = ps2.executeQuery();
+				while (rs2.next()) {
+					userid = rs2.getInt("userid");
+				}
+			}*/
 			
 			String query2 = "insert into address (userid,name,address,city,state,country,pincode,email,phone) values (?,?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query2);
-			ps.setInt(1, userid);
+			
+				ps.setInt(1, userid);	
 			ps.setString(2, name);
 			ps.setString(3, address);
 			ps.setString(4, city);
@@ -979,8 +1043,9 @@ public class DB {
 
 	}
 
-	public static String checkUserCredential(int cardNumber, int expireMonth,
-			int expireYear, int cvcCode, String cardName) {
+	// checking
+	public static String checkUserCardCredential(int cardNumber,
+			int expireMonth, int expireYear, int cvcCode, String cardName) {
 		Connection con;
 		try {
 			CardCredentials cc = new CardCredentials();
@@ -1031,6 +1096,7 @@ public class DB {
 		return "success";
 	}
 
+	// Getting entire bank
 	public static void getBankName(ArrayList<String> bank) {
 
 		Connection con;
@@ -1061,24 +1127,25 @@ public class DB {
 		}
 
 	}
-	public static void getAddress(ArrayList<DeliveryAddress> addr,int userid)
-	{
-		System.out.println("Addresss....."+userid);
+
+	public static void getAddress(ArrayList<DeliveryAddress> addr, int userid) {
+		System.out.println("Addresss....." + userid);
 		Connection con;
 		try {
 			con = DBConnection.getDBConnection();
-		
-			String query1="select name,address,city,state,country,pincode,email,phone,addressid from address where userid="+userid;
-			
-			PreparedStatement ps1 = (PreparedStatement) con.prepareStatement(query1);
-		
-	
-			
+
+			String query1 = "select name,address,city,state,country,pincode,email,phone,addressid from address where userid="
+					+ userid;
+
+			PreparedStatement ps1 = (PreparedStatement) con
+					.prepareStatement(query1);
+
 			ResultSet resultSet = ps1.executeQuery();
-			System.out.println("Query"+query1);
-			if (resultSet.next()) {
-				DeliveryAddress d=new DeliveryAddress();
-				
+			System.out.println("Query" + query1);
+			while (resultSet.next()) {
+				DeliveryAddress d = new DeliveryAddress();
+			
+
 				d.setName(resultSet.getString("name"));
 				d.setAddress(resultSet.getString("address"));
 				d.setCity(resultSet.getString("city"));
@@ -1087,12 +1154,13 @@ public class DB {
 				d.setPincode(resultSet.getInt("pincode"));
 				d.setEmail(resultSet.getString("email"));
 				d.setPhone(resultSet.getInt("phone"));
+				System.out.println(resultSet.getString("phone"));
 				d.setAddressid(resultSet.getInt("addressid"));
 				d.setUserid(userid);
 				addr.add(d);
-				
+
 			}
-		
+
 			con.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -1100,35 +1168,30 @@ public class DB {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-		
-	}
+
 		}
-	
-	
-	public static int Unreguser(String email)
-	{
+	}
+
+	public static int Unreguser(String email) {
 		Connection con;
-		int userid=0;
+		int userid = 0;
 		try {
 			con = DBConnection.getDBConnection();
 			System.out.println(email);
-			String  query="Insert into customer(email) values('"+email+"')";
-			System.out.println("trying to insert "+query);
+			String query = "Insert into customer(email) values('" + email
+					+ "')";
+			System.out.println("trying to insert " + query);
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
-			int rs=ps.executeUpdate();
-			/*if(rs==1)
-			{
-				query = "select userid from customer where email='"+email+"'";
-				PreparedStatement ps2 = (PreparedStatement) con
-						.prepareStatement(query);
-				ResultSet rs2 = ps2.executeQuery();
-				while(rs2.next())
-				{
-					userid = rs2.getInt("userid");
-				}
-				System.out.println("user id inserted"+userid);
-			}*/
+			int rs = ps.executeUpdate();
+			
+			 if(rs==1) { query =
+			 "select userid from customer where email='"+email+"'";
+			 PreparedStatement ps2 = (PreparedStatement) con
+			 .prepareStatement(query); ResultSet rs2 = ps2.executeQuery();
+			 while(rs2.next()) { userid = rs2.getInt("userid"); }
+			  System.out.println("user id inserted"+userid); }
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -1139,25 +1202,21 @@ public class DB {
 		}
 		return userid;
 	}
-	
-	
-	
-	public static void inserAddid(OrderDetails o,int addressid) {
-		
+
+	public static void insertAddid(Order o, int addressid) {
+
 		Connection con;
 		try {
 			con = DBConnection.getDBConnection();
-		
-			String query1="insert into flipkart.order (addressid) value (?)";
-			
-			PreparedStatement ps1 = (PreparedStatement) con.prepareStatement(query1);
+System.out.println("inside insert add.....");
+			String query1 = "insert into flipkart1.order (addressid) value (?)";
+				
+			PreparedStatement ps1 = (PreparedStatement) con
+					.prepareStatement(query1);
 			ps1.setInt(1, addressid);
-	
-			
-		ps1.executeUpdate();
-			
-			
-		
+
+			ps1.executeUpdate();
+
 			con.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -1165,27 +1224,93 @@ public class DB {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+
+		}
+
+	}
+	public static void getCartItem(int cartid,ArrayList<OrderItem> o)
+	{
+		Connection con;
+		try {
+			con = DBConnection.getDBConnection();
+
+			String query1 = "select name,address,city,state,country,pincode,email,phone,addressid from address where userid="
+					+ cartid;
+
+			PreparedStatement ps1 = (PreparedStatement) con
+					.prepareStatement(query1);
+
+			ResultSet resultSet = ps1.executeQuery();
+			System.out.println("Query" + query1);
+			while (resultSet.next()) {
+				DeliveryAddress d = new DeliveryAddress();
+			
+
+
+			}
+
+			con.close();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
 		
 	}
-		
-		
-		
-		
-		
-		
+	public static void getProducts(ArrayList<OrderItem> orditm,int cartid)
+	{
+		Connection con;
+		try {
+			con = DBConnection.getDBConnection();
+			PreparedStatement ps1;
+			ResultSet resultSet;
+			String query1 = " select productname,quantity,price,subtotal,deliverydetails,attributevalue "+
+					 "from product,cartitem,producteav where cartid=? and product.productid=cartitem.productid "
+					 + "and product.productid=producteav.productid and producteav.attributeid=6";
+			
+			//attribute id =6 is defined in attributes table
+
+			 ps1 = (PreparedStatement) con.prepareStatement(query1);
+			 ps1.setInt(1, cartid);
+			 resultSet = ps1.executeQuery();
+			 
+		//	System.out.println("Query" + query1);
+			
+			while (resultSet.next()) {
+			OrderItem o = new OrderItem();
+				o.setProductname(resultSet.getString("productname"));
+				System.out.println(resultSet.getString("productname"));
+				
+				o.setQuantity(resultSet.getInt("quantity"));
+				System.out.println("Quantity::"+resultSet.getInt("quantity"));
+				
+				
+				o.setPrice(resultSet.getInt("price"));
+				o.setSubtotal(resultSet.getInt("subtotal"));
+				o.setDeliverydetails(resultSet.getString("deliverydetails"));
+				o.setImagepath(resultSet.getString("attributevalue"));
+				orditm.add(o);
+
+			}
+
+
+			con.close();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
 	}
 
-	
-/**********************************************************************************/	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**********************************************************************************/
+
 	public static UserWho orderLogin(String email, String password) {
 		Connection con;
 		UserWho user = new UserWho();
@@ -1246,15 +1371,27 @@ public class DB {
 
 	public void WishlistInsert(int userid) {
 		String str;
+		String str1;
+		int count=0;
 		DBConnection connect = new DBConnection();
 		Connection con;
 		try {
 			con = connect.getDBConnection();
-
-			str = "insert into wishlist (userid) values(" + userid + ")";
-			PreparedStatement pr1 = (PreparedStatement) con
+			str1="select * from wishlist where userid="+userid;
+			PreparedStatement pr2=(PreparedStatement) con.prepareStatement(str1);
+			ResultSet result=pr2.executeQuery();
+			while(result.next())
+			{
+				count++;
+			}
+			System.out.println("inside wishlist insert count value:"+count);
+            if(count==0)
+            {
+			  str = "insert into wishlist (userid) values(" + userid + ")";
+			  PreparedStatement pr1 = (PreparedStatement) con
 					.prepareStatement(str);
-			pr1.executeUpdate();
+			  pr1.executeUpdate();
+            }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1380,7 +1517,5 @@ public class DB {
 		}
 
 	}
-
-	
 
 }

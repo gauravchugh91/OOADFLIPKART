@@ -12,7 +12,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import edu.iiitb.database.DB;
 import edu.iiitb.model.UserWho;
 
-public class LoginAction extends ActionSupport implements SessionAware {
+public class LoginAction extends ActionSupport {
 
 	public int getIsLoggedIn() {
 		return isLoggedIn;
@@ -43,15 +43,7 @@ public class LoginAction extends ActionSupport implements SessionAware {
 		this.password = password;
 	}
 
-	private SessionMap<String, Object> sessionMap;
 
-	public SessionMap<String, Object> getSessionMap() {
-		return sessionMap;
-	}
-
-	public void setSessionMap(SessionMap<String, Object> sessionMap) {
-		this.sessionMap = sessionMap;
-	}
 	public static String isEmailNotValid(String email,String password) {
 		
 		System.out.println("Index of '@' in "+email+" ="+email.indexOf("@"));
@@ -73,7 +65,8 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	
 
 	public String execute() {
-
+		Map<String, Object> sessionMap = ActionContext.getContext()
+				.getSession();
 		setIsLoggedIn(0);
 		String selectionModifier;
 		System.out.println(getEmail() + " " + getPassword());
@@ -86,9 +79,10 @@ public class LoginAction extends ActionSupport implements SessionAware {
 			sessionMap.put("login", "true");
 			sessionMap.put("email", sysUser.getEmail());
 			sessionMap.put("userID", sysUser.getUserID());
+			Wishlist wishlist = new Wishlist();
+			wishlist.WishlistInsert();
 
 			setIsLoggedIn(1);
-			sessionMap.put("isLoggedin", getIsLoggedIn());
 			if (sysUser.getIsAdmin() == 1) {
 				System.out.println("Admin " + getIsLoggedIn());
 				return "admin";
@@ -111,10 +105,5 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	 * }
 	 */
 
-	@Override
-	public void setSession(Map<String, Object> arg0) {
-		sessionMap = (SessionMap) arg0;
-
-	}
 
 }

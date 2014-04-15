@@ -1,6 +1,9 @@
 package edu.iiitb.controller;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import com.opensymphony.xwork2.ActionContext;
 
 import edu.iiitb.database.DB;
 import edu.iiitb.model.CategoryDetails;
@@ -8,6 +11,18 @@ import edu.iiitb.model.Product;
 
 public class ShowProduct {
 	
+	int productId;
+	Product product;
+	String islogin="false";
+	
+	public String getIslogin() {
+		return islogin;
+	}
+
+	public void setIslogin(String islogin) {
+		this.islogin = islogin;
+	}
+
 	//Common Code Start's
 	ArrayList<CategoryDetails> rootCategoryList =new ArrayList<CategoryDetails>();
 		
@@ -21,8 +36,7 @@ public class ShowProduct {
 		
 		//Common Code End's 
 	
-	int productId;
-	Product product;
+
 
 	public Product getProduct() {
 		return product;
@@ -58,6 +72,7 @@ public class ShowProduct {
 	 */
 	public String execute() throws Exception {
 		
+		Map<String,Object> session = ActionContext.getContext().getSession(); 
 		//common code start's
 				rootCategoryList = DB.RootCategoryList();	
 				for(int i=0; i<rootCategoryList.size(); i++)
@@ -67,8 +82,13 @@ public class ShowProduct {
 				//common code end's
 		
 		System.out.println("Product id is : " + productId);
+		if(session.get("userID")==null)
+			islogin="false";
+		else
+			islogin="true";
 		product = DB.getProduct(productId);
 		product.setProductEAV(DB.getProductAttributes(productId));
+		System.out.println("Number of attributes are : " +  product.getProductEAV().size());
 		subCategoryList = DB.SubCategoryList(0);
 		return "success";
 	}

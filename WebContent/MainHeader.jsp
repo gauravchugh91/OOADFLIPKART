@@ -6,7 +6,11 @@
 <head>
 <title>Flipkart Header</title>
 
-<!-- Bootstrap core CSS -->
+
+<script src="assets/js/jquery.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/bootstrap.js"></script>
+<script src="assets/js/bootstrap-hover-dropdown.js"></script>
 <link href="assets/css/bootstrap.css" rel="stylesheet">
 
 
@@ -97,7 +101,7 @@ a:HOVER {
 <!-- 
 				
  -->
- <script type="text/javascript">
+<script type="text/javascript">
  
  
  </script>
@@ -113,14 +117,14 @@ a:HOVER {
 							href="showHomePage"><img src="assets/images/flip.png" /></a>
 					</div>
 					<div class="container col-md-8 " id="search">
-						<s:if test="isLoggedIn==1">
+						<s:if test="%{ #session['userID'] != -1}">
 							<div class="container nav-collapse collapse"
 								style="display: block;">
 								<ul class="fk-font-12 navbar-right link-list">
 									<li><a href="aboutUs"> 24x7 Customer Care </a></li>
 									<li><a href="trackOrder">Track Order</a></li>
 									<li><a href="#" class="dropdown-toggle js-activated">
-											Hi! <s:property value="email" /> <b class="caret"></b>
+											Hi! <s:property value="%{ #session['email']}" /> <b class="caret"></b>
 									</a>
 										<ul class="dropdown-menu">
 											<li class="divider"></li>
@@ -148,21 +152,20 @@ a:HOVER {
 							</div>
 						</s:else>
 						<form action="search" method=post>
-						<div id="searchIconDiv" style="margin-top: 5px;">
-						
-							<div class="container col-md-8" style="background-color: white">
-								<img src="assets/images/searchicon.jpg"
-									style="width: 19px; height: 19px;" /> <input type="text"
-									class="searchBarText" name="searchBar"
-									placeholder="Search for a product, category or brand"
-									autofocus="autofocus" />
+							<div id="searchIconDiv" style="margin-top: 5px;">
+
+								<div class="container col-md-8" style="background-color: white">
+									<img src="assets/images/searchicon.jpg"
+										style="width: 19px; height: 19px;" /> <input type="text"
+										class="searchBarText" name="searchBar"
+										placeholder="Search for a product, category or brand"
+										autofocus="autofocus" />
+								</div>
+								<input class="searchButton" type="submit" value="Search" /> <input
+									type="submit" class="btn btn-sm btn-primary cartbutton"
+									data-toggle="modal" data-target="#cart" id="btnCart"
+									value="CART" />
 							</div>
-							<input class="searchButton" type="submit" value="Search" />
-							
-							 <input type="submit" class="btn btn-sm btn-primary cartbutton"
-								data-toggle="modal" data-target="#cartHome" id="btnCart"
-								value="CART" />
-						</div>
 						</form>
 					</div>
 				</div>
@@ -223,91 +226,109 @@ a:HOVER {
 		</div>
 	</div>
 
-<div id="SignUpModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">SIGN UP!</h4>
-            </div>
-           
-            <div >
-                
-                <form name = "SignUpform" action="signup" method="post">
-                <table>
-                <tr>
-                
-                   <td>  <label for="email">Enter Email :</label></td>
-                   <td>  <input type="text" name="email"/></td>
-                               <br/><br/>
-                </tr>
-                <tr><td>  </td><td> </td></tr>
-                <tr><td> </td><td> </td></tr>
-                <tr>
-                   
-                   <td> <label for="assign_password">Enter Password :</label></td>
-                   <td><input type="password" name ="assign_password"/></td>
-                 
-                </tr>   
-                   <br/><br/>
-                <tr><td>  </td><td> </td></tr>
-                <tr><td> </td><td> </td></tr>
-                <tr>   
-                
-                   <td> <label for="reTypePass">Retype Password :</label></td>
-                   <td><input type="password" name ="reTypePass"/></td>
-                
-                </tr>
-                <tr><td> </td><td>  </td></tr>
-                <tr><td> </td><td>  </td></tr>
-                </table>   
-                  <input type="submit" class="btn btn-primary" value="Sign Up!"/>
-                </form>
-                
-            </div> 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+	<div id="SignUpModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title">SIGN UP!</h4>
+				</div>
+
+				<div>
+
+					<form name="SignUpform" action="signup" method="post">
+						<table>
+							<tr>
+
+								<td><label for="email">Enter Email :</label></td>
+								<td><input type="text" name="email" /></td>
+								<br />
+								<br />
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+
+								<td><label for="assign_password">Enter Password :</label></td>
+								<td><input type="password" name="assign_password" /></td>
+
+							</tr>
+							<br />
+							<br />
+							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+
+								<td><label for="reTypePass">Retype Password :</label></td>
+								<td><input type="password" name="reTypePass" /></td>
+
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td></td>
+								<td></td>
+							</tr>
+						</table>
+						<input type="submit" class="btn btn-primary" value="Sign Up!" />
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
-	<div class="modal fade" id="cartHome" tabindex="-1">
+	<div class="modal fade" id="cart" tabindex="-1">
 		<div class="modal-dialog" style="width: 900px; height: 500px;">
 			<div class="modal-content" style="height: 500px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h4 class="modal-title" id="myModalLabel">
-						Cart (<label id="itemCount"></label>)
+						Cart (<label id="noOfItems"></label>)
 					</h4>
 
 				</div>
-				<div class="modal-body" id="noItem"
+				<div class="modal-body" id="noItemsBody"
 					style="overflow-y: auto; height: 250px; padding-left: 2%; padding-right: 2%; border: medium; border-color: blue; top: 20%; left: 40%">No
 					Items in cart</div>
 
 				<div class="modal-body ">
-					<div id="itemBody"
+					<div id="bod"
 						style="overflow-y: auto; height: 250px; padding-left: 2%; padding-right: 2%"></div>
 				</div>
 				<div class="modal-footer" style="bottom: 0; height: 100px;">
-					<div style="float: right" id="totalAmountDiv">
-						Total Amount Payable : Rs <label id="totalAmount"></label>
+					<div style="float: right" id="amountDiv">
+						Total Amount Payable : Rs <label id="total"></label>
 					</div>
 					<br> <br>
 					<button type="button" class="btn btn-default" data-dismiss="modal">Continue
 						Shopping</button>
-					<a href="placeorder" class="btn btn-primary" id="orderPlace">Place
+					<a href="placeorder" class="btn btn-primary" id="order">Place
 						Order</a>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<script src="assets/js/jquery.js"></script>
-	<script src="assets/js/bootstrap.js"></script>
-	<script src="assets/js/bootstrap-hover-dropdown.js"></script>
 
 	<script>
 	
@@ -316,118 +337,7 @@ a:HOVER {
 				$("#SignUpModal").modal('show');
 			});
 		 });
-		 
-	
-	
-	
 		$('.js-activated').dropdownHover().dropdown();
-		// 		$('a.log').click(function() {
-		// 			$("#LoginModal").modal('show');
-		// 		});
-
-		function showMyCart(data) {
-			var length = data.cartItems.length;
-			$("#itemCount").html(length);
-			if (length == 0) {
-				$("#noItem").css("visibility", "visible");
-				$("#itemBody").css("visibility", "hidden");
-				$("#orderPlace").css("visibility", "hidden");
-				$("#totalAmountDiv").css("visibility", "hidden");
-			} else {
-				$("#noItem").css("visibility", "hidden");
-				$("#orderPlace").css("visibility", "visible");
-				$("#itemBody").css("visibility", "visible");
-				$("#totalAmountDiv").css("visibility", "visible");
-			}
-
-			$("#itemBody").empty();
-			$("#itemBody").append(
-					"<table id =tablecart class='table table-striped'>"
-							+ "<thead><tr>" + "<th></th><th>Product Name</th>"
-							+ "<th>Quantity</th>" + "<th>Price</th>"
-							+ "<th>Subtotal</th><th>&nbsp;</th>"
-							+ "</tr> </thead><tbody>");
-			for (var i = 0; i < length; i++) {
-				$("#tablecart")
-						.append(
-								"<tr>"
-										+ "<td>"
-										+ "<img src='http://lorempixel.com/140/140/' height='60' width='40'>"
-										+ "</td>"
-										+ "<td>"
-										+ data.productList[i].productName
-										+ "</td>"
-										+ "<td class='tdQty'><input class='change' pid='"+data.cartItems[i].productId+"'type='text' value="
-											+ data.cartItems[i].quantity
-											+ ">"
-										+ "<a style='color : green; visibility: hidden; display: inline;' href='#' class='savQty' "
-											+ "pid='"+data.cartItems[i].productId+"'type='text' >Save</a></td>"
-										+ "<td>"
-										+ data.cartItems[i].price
-										+ "</td>"
-										+ "<td>"
-										+ data.cartItems[i].subtotal
-										+ "</td>"
-										+ "<td><button type='button' pid='"+data.cartItems[i].productId+"' class='close delete' id='itemDelete'>"
-										+ "&times;" + "</button>" + "</td>"
-										+ "</tr>");
-			}
-			$("#itemBody").append("</tbody></table>");
-			$("#totalAmount").html(data.currentCart.totalAmount);
-
-			$(".delete").click(function(event) {
-				var elem = event.currentTarget;
-				var prodId = $(elem).attr("pid");
-
-				$.ajax({
-					type : 'POST',
-					url : 'deleteCart?productId=' + prodId,
-					success : function(data) {
-						console.log(data);
-						$("#itemBody").empty();
-						showMyCart(data);
-
-					}
-				});
-
-			});
-			$(".change").click(function(event) {
-				var elem = event.currentTarget;
-				var prodId = $(elem).attr("pid");
-				$(".savQty").css("visibility", "visible");
-
-			});
-
-			$(".savQty").click(function(event) {
-				var elem = event.currentTarget;
-				var prodId = $(elem).attr("pid");
-				var qty = $(".change").attr(value);
-				alert(prodId + "		" + qty);
-				// 				$.ajax({
-				// 					type : 'POST',
-				// 					url : 'editCart?productId=' + prodId,
-				// 					success : function(data) {
-				// 						// 												console.log(data);
-				// 						$("#bod").empty();
-				// 						showcart(data);
-
-				// 					}
-				// 				});
-				$("#savQty").css("visibility", "hidden");
-			});
-		}
-
-		$("#btnCart").click(function() {
-			$.ajax({
-				type : 'POST',
-				url : 'displayCart',
-				success : function(data) {
-					showMyCart(data);
-
-				}
-			});
-
-		});
 	</script>
 </body>
 </html>

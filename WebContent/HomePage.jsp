@@ -7,93 +7,272 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Flipkart</title>
 </head>
-<body>
-<br>
-<br>
-<br>
-<div style="float:center ;width:100%; ">
+<body style="background-color: #F5F2F6;">
 
+<div style="float: center; width: 100%;">
+<div style="float: left; width: 80%;">
 
-	<div style="float:left ;width:80%; background-color: = white;">
-	
-	<h3>Electronics</h3>
-	<div style="float:right ;width:100%;">
-	
-	<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/camera.jpg" height="80" width="80">
-		<div><label>Camera</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="80" width="80">
-		<div><label>Mobile</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/watch.jpg" height="80" width="80">
-		<div><label>Watch</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/camera.jpg" height="80" width="80">
-		<div><label>Camera</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="80" width="80">
-		<div><label>Mobile</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/watch.jpg" height="80" width="80">
-		<div><label>Watch</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="80" width="80">
-		<div><label>Mobile</label></div>
-		</div>
-		
-		<div style="float:left ;width:10%;">
-		<img alt="mobile" src="assets/images/watch.jpg" height="80" width="80">
-		<div><label>Watch</label></div>
-		</div>
-		
-		</div>
-		
-		<div>
-		<img alt="mobile" src="assets/images/watch.jpg" height="150" width="150">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="200" width="200">
-		<img alt="mobile" src="assets/images/watch.jpg" height="150" width="150">
-		</div>
-		
-		<h3>Electronics</h3>
-		<img alt="mobile" src="assets/images/camera.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/watch.jpg" height="100" width="100">
-		
-		
-		<h3>Fashion</h3>
-		<img alt="mobile" src="assets/images/camera.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/watch.jpg" height="100" width="100">
-		
-		<img alt="mobile" src="assets/images/camera.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="150" width="150">
-		<img alt="mobile" src="assets/images/watch.jpg" height="100" width="100">
-		
-		
-		
-		<h3>Electronics</h3>
-		<img alt="mobile" src="assets/images/camera.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/mobile.jpg" height="100" width="100">
-		<img alt="mobile" src="assets/images/watch.jpg" height="100" width="100">
-		
-	</div>
-	<div style="float:right ;width:20%; background-color: grey;">
-	<h3>Discount Offers</h3>
-	<img alt="mobile" src="assets\images\mobile.jpg">
-	</div>
+<div id="myCarousel" class="carousel slide" style="padding: 12px; border-color: #000000;border-width: 12px;outline-color: black;color: #000000";">
+      <!-- Indicators -->
+      <ol class="carousel-indicators" style="padding: 12px; border-color: black;border-width: 12px;outline-color: black;color: black;">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner" >
+        <div class="item active">
+          <img src="assets/images/camera.jpg" data-src="holder.js/100%x500/auto/#777:#7a7a7a/text:First slide" alt="First slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <font color="#000000"><h1>Available On Best Price</h1></font>
+			</div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="assets/images/mobile.jpg" data-src="holder.js/100%x500/auto/#777:#7a7a7a/text:Second slide" alt="Second slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <font color="#000000"><h1>Hurry Now</h1></font>
+			</div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="assets/images/shoes.jpg" data-src="holder.js/100%x500/auto/#777:#7a7a7a/text:Third slide" alt="Third slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <font color="#000000"><h1>New Arrivals</h1></font>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 </div>
+
+	
+
+	<br>
+	<br>
+	<div style="background-color: #2E2B2B; height: 40" >
+	<font color="white"><h3>Electronics</h3></font>
+	</div>
+	<div id="myCarousel2" class="carousel slide">
+      <!-- Indicators -->
+      <ol class="carousel-indicators" >
+        <li data-target="#myCarousel2" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel2" data-slide-to="1"></li>
+        <li data-target="#myCarousel2" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="item active" style="width: 100%">
+        <div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        <s:iterator value="electronicsList">
+			
+				<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator> 
+			<div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>  
+        </div>
+        <div class="item" style="width: 100%">
+          <s:iterator value="electronicsList">
+			
+				<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator>          
+        </div>
+        <div class="item" style="width: 100%">
+          <s:iterator value="electronicsList">
+			
+				<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator>           
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel2" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel2" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div>
+
+    
+    <br><br>
+    <div style="background-color: #2E2B2B; height: 40" >
+	<font color="white"><h3>Buy Now</h3></font>
+	</div>
+	<br><br>
+    <div style="background-color: white; height: 180">
+   			<center>
+		<br> <br>
+		<div class="container">
+
+			<s:iterator value="electronicsList">
+			
+				<div class="container col-md-3">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" alt="340x340" height="160" width="130">
+				</s:if>
+				</s:iterator>
+						<br>
+						<br>
+						<font color="#000000" size="3">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator>
+		</div>
+	</center>
+	 </div>
+    <br><br><br>
+    
+    <div style="background-color: #2E2B2B; height: 40" >
+	<font color="white"><h3>Books</h3></font>
+	</div>
+	<div id="myCarousel3" class="carousel slide" style="background-color: white;">
+      <!-- Indicators -->
+      <ol class="carousel-indicators" >
+        <li data-target="#myCarousel3" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel3" data-slide-to="1"></li>
+        <li data-target="#myCarousel3" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        <div class="item active" style="width: 100%">
+        <div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        <s:iterator value="booksList">
+			
+				<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator>     
+        </div>
+        <div class="item" style="width: 100%">
+          <s:iterator value="booksList">
+			
+				<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator> 
+			<div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>         
+        </div>
+        <div class="item" style="width: 100%">
+          <s:iterator value="booksList">
+			
+				<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator>          
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel3" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel3" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div>
+    
+    <br><br>
+    <div style="background-color: #2E2B2B; height: 40" >
+	<font color="white"><h3>Fashion</h3></font>
+	</div>
+	<br><br>
+    <div style="background-color: white;">
+   			<center>
+		<br> <br>
+		<div class="container">
+
+			<s:iterator value="fashionList">
+			
+				<div class="container col-md-3">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" alt="340x340" height="160" width="130">
+				</s:if>
+				</s:iterator>
+						<br>
+						<br>
+						<font color="#000000" size="3">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+			</s:iterator>
+		</div>
+	</center>
+	 </div>
+    <br><br><br>
+
+    
+    
+    
+</div></div>
 </body>
 </html>

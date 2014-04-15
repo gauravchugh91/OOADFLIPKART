@@ -18,7 +18,10 @@ public class Product {
 	int categoryId;
 	String productName;
 	ArrayList<ProductEAV> productEAV;
-    HashMap<String,String> prodinfo= new HashMap<String,String>();
+
+	String imagePath;
+
+	HashMap<String,String> prodinfo= new HashMap<String,String>();
 
 
 	public HashMap<String, String> getProdinfo() {
@@ -51,5 +54,10 @@ public class Product {
 	public void setProductEAV(ArrayList<ProductEAV> productEAV) {
 		this.productEAV = productEAV;
 	}
-	
+	public String getImagePath() {
+		return imagePath;
+	}
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
 }

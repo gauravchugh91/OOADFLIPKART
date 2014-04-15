@@ -10,21 +10,29 @@ import edu.iiitb.database.DB;
 import edu.iiitb.model.CategoryDetails;
 import edu.iiitb.model.Product;
 
-public class ShowProductList implements SessionAware {
+public class ShowProductList{
 
-	private SessionMap<String, Object> sessionMap;
 	ArrayList<Product> products;
 	int category;
+	//rishi's changing part!!!!!!!!!!!!
+	private String email;
+	private int isLoggedIn;
 
-	public SessionMap<String, Object> getSessionMap() {
-		return sessionMap;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setSessionMap(SessionMap<String, Object> sessionMap) {
-		this.sessionMap = sessionMap;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	// static int count;
+	public int getIsLoggedIn() {
+		return isLoggedIn;
+	}
+
+	public void setIsLoggedIn(int isLoggedIn) {
+		this.isLoggedIn = isLoggedIn;
+	}
 
 	// Common Code Start's
 	ArrayList<CategoryDetails> rootCategoryList = new ArrayList<CategoryDetails>();
@@ -83,38 +91,6 @@ public class ShowProductList implements SessionAware {
 		}
 		// common code end's
 
-		// User not logged in
-		//System.out.println("User logged in"+sessionMap.get("userid").toString());
-	    sessionMap.put("userid", -1);
-         
-		// User Logged in
-		// sessionMap.put("userid", 1);
-		System.out.println("Im'm here 1");
-		if (!(sessionMap.get("userid").equals(-1))) {
-			System.out.println("Im'm here 2");
-			if (!(sessionMap.containsKey("cartid"))) {
-				System.out.println("Im'm here 3");
-				// insert cart row into the cart table, get cart id and then put
-				// it in session.
-				int cartid = DB.createCart((int) (sessionMap.get("userid")));
-				sessionMap.put("cartid", cartid);
-			}
-			// fetch the cart id corresponding to the user id on login or
-			// remember me
-			// if cart id corresponding to the user doesn't exist then create a
-			// new one(only for signup this will happen)
-		}
-
-		// Not a logged in user, then first check cookies or cart id
-		// If cookies hold cart id use it!!
-		// If not then create a new cart id and store it in cookies
-		else {
-			if (!(sessionMap.containsKey("cartid"))) {
-				// insert cart row into the cart table
-				int cartid = DB.createCart((int) (sessionMap.get("userid")));
-				sessionMap.put("cartid", cartid);
-			}
-		}
 
 		products = new ArrayList<Product>();
 		products = DB.getProductsList(category);
@@ -127,9 +103,4 @@ public class ShowProductList implements SessionAware {
 		return "success";
 	}
 
-	@Override
-	public void setSession(Map<String, Object> arg0) {
-		sessionMap = (SessionMap) arg0;
-
-	}
 }

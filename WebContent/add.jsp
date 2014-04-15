@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<script type='text/javascript'>
+ <script type='text/javascript'>
     /* attach a submit handler to the form */
     $("#formid").submit(function(event) {
 
@@ -23,10 +23,10 @@
 
       /* Put the results in a div */
       posting.done(function( data ) {
-        alert('success');
+        //alert('success');
       });
     });
-</script>
+</script> 
 
 
 <body>
@@ -64,7 +64,7 @@
  <br>
  <button id="save"> Save & Continue</button>
   <!--  <input  id="2" type="submit" value="Save & Continue" /> -->
-   
+   <s:hidden  value="newaddress" name="check_address" />
    </s:form>
 </body>
 </html>

@@ -8,6 +8,7 @@ import com.opensymphony.xwork2.ActionContext;
 
 import edu.iiitb.database.DB;
 import edu.iiitb.model.DeliveryAddress;
+import edu.iiitb.model.OrderItem;
 
 
 
@@ -15,7 +16,29 @@ public class GetUserDetails {
 	public String isLogin;
 	 String emailid;
 	 int userid;
-	 public int getUserid() {
+	 ArrayList<OrderItem> orditm=new ArrayList<OrderItem>();
+	 int cartid;
+	 public int getCartid() {
+		return cartid;
+	}
+
+
+	public void setCartid(int cartid) {
+		this.cartid = cartid;
+	}
+
+
+	public ArrayList<OrderItem> getOrditm() {
+		return orditm;
+	}
+
+
+	public void setOrditm(ArrayList<OrderItem> orditm) {
+		this.orditm = orditm;
+	}
+
+
+	public int getUserid() {
 		return userid;
 	}
 
@@ -74,19 +97,22 @@ public class GetUserDetails {
 	}
 	public String execute() throws Exception {
 		 sessionMap = (SessionMap<String, Object>) ActionContext.getContext().getSession();
-			if(!sessionMap.isEmpty())
+		 userid=Integer.parseInt(sessionMap.get("userID").toString());
+			if(userid!=-1)
 				
 			{ 
-				if(sessionMap.containsKey("login"))
+				//if(sessionMap.containsKey("login"))
 				{
-				isLogin=(String) sessionMap.get("login");
+				//isLogin="true";
 			  
-			 if(isLogin.equals("true"))
+			 //if(isLogin.equals("true"))
 			 {
-				 userid=Integer.parseInt(sessionMap.get("userID").toString());
+				// userid=Integer.parseInt(sessionMap.get("userID").toString());
 				emailid=(String) sessionMap.get("email");
 				System.out.println("user id="+sessionMap.get("userID"));
 				DB.getAddress(addr,userid);
+				cartid=(int)sessionMap.get("cartid");
+				DB.getProducts(orditm,cartid);
 			 }
 				}
 			}

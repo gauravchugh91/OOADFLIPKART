@@ -1,11 +1,14 @@
 package edu.iiitb.controller;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.struts2.dispatcher.SessionMap;
 
+import com.opensymphony.xwork2.ActionContext;
+
 import edu.iiitb.database.DB;
-import edu.iiitb.model.OrderDetails;
+import edu.iiitb.model.Order;
 
 public class OrderDetailsAction {
 int addressid;
@@ -40,10 +43,11 @@ public void setAddressid(int addressid) {
 
 public String execute() throws Exception 
 {
-	
-	OrderDetails o=new OrderDetails();
+	Map<String, Object> sessionMap = ActionContext.getContext().getSession();
+	System.out.println("Cart id::::"+sessionMap.get("cartid"));
+	Order o=new Order();
 	System.out.println("addressid :"+addressid);
-	DB.inserAddid(o,addressid);
+	DB.insertAddid(o,addressid);
 	DB.getBankName(bank);
 return "success";
 }

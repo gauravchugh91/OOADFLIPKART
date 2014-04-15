@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.Map;
 
 
-
-
-
-
-
-
 import com.opensymphony.xwork2.ActionContext;
 
 import edu.iiitb.database.DB;
+import edu.iiitb.model.DeliveryAddress;
+import edu.iiitb.model.Order;
+import edu.iiitb.model.OrderItem;
 
 public class DeliveryAddressAction  {
 
@@ -23,8 +20,47 @@ public class DeliveryAddressAction  {
 	String state;
 	String country;
 	int pincode;
-	String email;
+	String emailid;
 	int phone;
+	int addressid;
+	
+	int cartid;
+	
+	Map<String, Object> sessionMap = ActionContext.getContext().getSession();
+	ArrayList<OrderItem> orditm ;
+	
+	
+	public int getCartid() {
+		return cartid;
+	}
+	public void setCartid(int cartid) {
+		this.cartid = cartid;
+	}
+	public Map<String, Object> getSessionMap() {
+		return sessionMap;
+	}
+	public void setSessionMap(Map<String, Object> sessionMap) {
+		this.sessionMap = sessionMap;
+	}
+	public ArrayList<OrderItem> getOrditm() {
+		return orditm;
+	}
+	public void setOrditm(ArrayList<OrderItem> orditm) {
+		this.orditm = orditm;
+	}
+	public int getAddressid() {
+		return addressid;
+	}
+	public void setAddressid(int addressid) {
+		this.addressid = addressid;
+	}
+	public String getEmailid() {
+		return emailid;
+	}
+	public void setEmailid(String emailid) {
+		this.emailid = emailid;
+	}
+	
 	public int getUserid() {
 		return userid;
 	}
@@ -67,32 +103,61 @@ public class DeliveryAddressAction  {
 	public void setPincode(int pincode) {
 		this.pincode = pincode;
 	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	
 	public int getPhone() {
 		return phone;
 	}
 	public void setPhone(int phone) {
 		this.phone = phone;
 	}
+ArrayList<DeliveryAddress> addr = new ArrayList<DeliveryAddress>();
 	
+ArrayList<String> bank = new ArrayList<String>();
+	public ArrayList<String> getBank() {
+	return bank;
+}
+public void setBank(ArrayList<String> bank) {
+	this.bank = bank;
+}
+	public ArrayList<DeliveryAddress> getAddr() {
+		return addr;
+	}
+
+	public void setAddr(ArrayList<DeliveryAddress> addr) {
+		this.addr = addr;
+	}
 public String execute() throws Exception {
-	Map<String, Object> sessionMap = ActionContext.getContext().getSession();
 	
-	if (sessionMap.containsKey("userid")) {
-		userid=Integer.parseInt(sessionMap.get("userID").toString());
-		email=(String) sessionMap.get("email");
-		DB.AddDeliveryAddress(userid,name,address,city,state,country,pincode,email,phone);
-		
+	//unregistered user is put in session whenever unregistered user places an order
+	if (sessionMap.containsKey("unregistered")) {
+		System.out.println("Unregistered user Entry");
+		DB.AddDeliveryAddress((int)sessionMap.get("unregistered"),name,address,city,state,country,pincode,emailid,phone);
 		return "success";
+		
 	} else
 	{	
-		DB.AddDeliveryAddress(-1,name,address,city,state,country,pincode,email,phone);
+		userid=Integer.parseInt(sessionMap.get("userID").toString());
+		emailid=(String) sessionMap.get("email");
+		DB.AddDeliveryAddress(userid,name,address,city,state,country,pincode,emailid,phone);
+		DB.getAddress(addr,userid);
+		DB.getBankName(bank);
 		return "success";
+		
 	}
+	
 	}
+public String existingAddress () throws Exception { 
+	orditm= new ArrayList<OrderItem>();
+	cartid=(int)sessionMap.get("cartid");
+	System.out.println("Cart id::::"+sessionMap.get("cartid"));
+	sessionMap.put("addrid", addressid);
+	
+	/*DB.getProducts(orditm,cartid);
+	for (OrderItem o:orditm)
+	System.out.println("p name"+o.getProductname());
+    System.out.println("Address::"+addressid);*/
+
+
+return "success";
+}
 }

@@ -13,6 +13,7 @@ public class Logout {
 		if (sessionMap.containsKey("userID")) {
 			
 			sessionMap.put("userID",-1);
+			sessionMap.remove("email");
 			sessionMap.remove("cartid");
 		}
 

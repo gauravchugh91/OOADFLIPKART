@@ -17,11 +17,19 @@ public class Product {
 	int productId;
 	int categoryId;
 	String productName;
+	int discountPrice=0;
+
 	ArrayList<ProductEAV> productEAV;
 
 	String imagePath;
 
 	HashMap<String,String> prodinfo= new HashMap<String,String>();
+	public int getDiscountPrice() {
+		return discountPrice;
+	}
+	public void setDiscountPrice(int discountPrice) {
+		this.discountPrice = discountPrice;
+	}
 
 
 	public HashMap<String, String> getProdinfo() {

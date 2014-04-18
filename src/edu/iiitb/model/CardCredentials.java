@@ -1,15 +1,20 @@
 package edu.iiitb.model;
 
+import java.math.BigDecimal;
+
 public class CardCredentials {
 	
-	public int cardNumber;	
+	BigDecimal cardNumber;	
 	public int expireMonth;
 	public int expireYear;
 	public int cvcCode;
 	public String cardName;
 	public int debitBalance;
+	public int creditLimit;
+	
 	public String cardType;
 	
+	public String password;
 
 public String getCardType() {
 		return cardType;
@@ -17,12 +22,25 @@ public String getCardType() {
 	public void setCardType(String cardType) {
 		this.cardType = cardType;
 	}
-public int getCardNumber() {
-	return cardNumber;
-}
-public void setCardNumber(int cardNumber) {
-	this.cardNumber = cardNumber;
-}
+
+public BigDecimal getCardNumber() {
+		return cardNumber;
+	}
+	public void setCardNumber(BigDecimal cardNumber) {
+		this.cardNumber = cardNumber;
+	}
+	public int getCreditLimit() {
+		return creditLimit;
+	}
+	public void setCreditLimit(int creditLimit) {
+		this.creditLimit = creditLimit;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 public int getExpireMonth() {
 	return expireMonth;
 }

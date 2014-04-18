@@ -3,6 +3,7 @@ package edu.iiitb.model;
 // bean class for orderitem table
 //Author:Chirag Saraiya
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class OrderItem {
@@ -21,8 +22,15 @@ public class OrderItem {
  DeliveryAddress da;
  String deliverydetails;
  
+ ArrayList<String> validStatuses; 
  
- @Override
+ public ArrayList<String> getValidStatuses() {
+	return validStatuses;
+}
+public void setValidStatuses(ArrayList<String> validStatuses) {
+	this.validStatuses = validStatuses;
+}
+@Override
 public String toString() {
 	// TODO Auto-generated method stub
 	return super.toString();

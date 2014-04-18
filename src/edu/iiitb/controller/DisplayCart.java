@@ -2,6 +2,7 @@ package edu.iiitb.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -249,16 +250,78 @@ System.out.println("main yaha pe hu");
 	public String editDisplayCart() throws Exception {
 		Map<String, Object> sessionMap = ActionContext.getContext()
 				.getSession();
+		String [] str;
+		int minFree;
+		int minQuantity;
+		int count=1;
+		int price = 0;
+		int temp;
+		int tempQuantity=0;
 		int cartId = (int) sessionMap.get("cartid");
 		cartItems = new ArrayList<CartItem>();
 		productList = new ArrayList<Product>();
-		currentCart = new Cart();		
-		System.out.println("quantity is " + quantity);
-		DB.editCartItem(productId, quantity, cartId);
+		currentCart = new Cart();	
+     
+        System.out.println(" Ankesh Test 1 quantity is " + quantity);
+        System.out.println("hello ankesh sharma");
+        product = new Product(); 
+        System.out.println("ankesh product id"+productId);
+        product = DB.getProduct(productId);
+		product.setProductEAV(DB.getProductAttributes(productId));
+		System.out.println("ankesh Eav size:"+product.getProductEAV().size());
+	
+        for (int i = 0; i < product.getProductEAV().size(); i++) {
+		if(product.getProductEAV().get(i).getAttributeName().equals("Offer"))
+		{
+			str = product.getProductEAV().get(i).getAttributeValue().split(" ");
+			minQuantity= Integer.parseInt(str[1]);
+			minFree=Integer.parseInt(str[3]);
+			temp=minQuantity;
+			System.out.println("Ankesh test2");
+			while(temp < quantity)
+			{
+				temp=temp+minQuantity;
+				count++;
+				System.out.println("Ankesh test3 count"+count);
+				
+			}
+			if(temp==quantity)
+			{
+				tempQuantity=quantity;
+				System.out.println("ankesh check tempQuantity:"+tempQuantity);
+				quantity= quantity+(count*minFree);
+			}
+			else
+			{
+				count--;
+				System.out.println("ankesh check tempQuantity:"+tempQuantity);
+				tempQuantity=quantity;
+				quantity = quantity+(count*minFree);
+			}
+		
+		}
+		
+		}
+		cartItems = DB.getCartItems(cartId);
+		Iterator itr = cartItems.iterator();
+		while(itr.hasNext())
+		{
+			CartItem item = (CartItem) itr.next();
+			if(item.getProductId()==productId)
+			{
+				price= item.getPrice();
+			}
+		}
+		
+
+		
+		DB.editCartItem(productId,price, quantity,tempQuantity, cartId);
+		System.out.println("ankesh test 4");
 		cartItems = DB.getCartItems(cartId);
 
 		for (int i = 0; i < cartItems.size(); i++) {
 			Product prod = new Product();
+			System.out.println("ankesh test 5");
 			prod = DB.getProduct(cartItems.get(i).getProductId());
 			totalAmount += cartItems.get(i).getSubtotal();
 			productList.add(prod);
@@ -292,4 +355,4 @@ System.out.println("main yaha pe hu");
 		sessionMap.put("noOfItems", numberOfItems);
 		return "success";
 	}
-}
+	}

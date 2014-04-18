@@ -10,7 +10,7 @@ import edu.iiitb.database.DB;
 import edu.iiitb.model.DeliveryAddress;
 import edu.iiitb.model.Order;
 import edu.iiitb.model.OrderItem;
-
+//in Session map addrid is included// 
 public class DeliveryAddressAction  {
 
 	int userid;
@@ -131,14 +131,16 @@ public String execute() throws Exception {
 	//unregistered user is put in session whenever unregistered user places an order
 	if (sessionMap.containsKey("unregistered")) {
 		System.out.println("Unregistered user Entry");
-		DB.AddDeliveryAddress((int)sessionMap.get("unregistered"),name,address,city,state,country,pincode,emailid,phone);
+	addressid=DB.AddDeliveryAddress((int)sessionMap.get("unregistered"),name,address,city,state,country,pincode,emailid,phone);
+	sessionMap.put("addrid", addressid);
 		return "success";
 		
 	} else
 	{	
 		userid=Integer.parseInt(sessionMap.get("userID").toString());
 		emailid=(String) sessionMap.get("email");
-		DB.AddDeliveryAddress(userid,name,address,city,state,country,pincode,emailid,phone);
+		addressid=	DB.AddDeliveryAddress(userid,name,address,city,state,country,pincode,emailid,phone);
+		sessionMap.put("addrid", addressid);
 		DB.getAddress(addr,userid);
 		DB.getBankName(bank);
 		return "success";

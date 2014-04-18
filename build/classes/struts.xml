@@ -48,7 +48,13 @@
             <result name="customer">/index.jsp</result>
             <result name="error">/index.jsp</result>
        </action>
-		
+		<action name="forgotPassword" method="execute" class="edu.iiitb.controller.ForgetPassword">
+		    <result name="success">/passwordsent.jsp</result>
+		    <result name="error">/index.jsp</result>
+		</action>
+		<action name="logout" method="execute" class="edu.iiitb.controller.Logout">
+			<result name="success">/index.jsp</result>
+		</action>
 		
 		
 		
@@ -63,6 +69,10 @@
 			method="execute">
 			<result name="success">/categories.jsp</result>
 		</action>
+		<action name="showmenu" class="edu.iiitb.controller.ShowMenu"
+			method="execute">
+			<result name="success">/admin.jsp</result>
+		</action>
         <action name="showOrderItem" class="edu.iiitb.controller.ShowOrderItem"
 			method="execute">
 			<result name="success">/showOrderItem.jsp</result>
@@ -72,7 +82,10 @@
 			method="execute">
 			<result name="success">/enterCat.jsp</result>
 		</action>
-
+        <action name="editProd" class="edu.iiitb.controller.EditProductAdmin"
+			method="execute">
+			<result name="success">/admin.jsp</result>
+		</action>
 
 		<action name="addProd" class="edu.iiitb.controller.AddProduct"
 			method="execute">
@@ -97,20 +110,43 @@
 			<result name="success">/admin.jsp</result>
 		</action>
 
+	  <action name="stockManagement" class="edu.iiitb.controller.ManageStock"
+			method="execute">
+			<result name="success">/toBeUpdatedList.jsp</result>
+		</action>
+
 		<action name="addaddress" class="edu.iiitb.controller.DeliveryAddressAction"
 			method="execute">
 			<result name="success">/order.jsp</result>
 		</action>
 
 		<action name="creditcard" class="edu.iiitb.controller.CardCredentialsAction"
+			method="creditCard">
+			<result name="success">/paymentgateway.jsp</result>
+			<result name="failure">/failure.jsp</result>
+		</action>
+		
+		<!-- *************************************************** -->
+		<action name="netbankpay" class="edu.iiitb.controller.NetBankingAction" method ="check">
+			<result name="success">/netpaygateway.jsp</result>
+		</action>
+		
+		
+		<action name="makepayment1" class="edu.iiitb.controller.NetBankingAction" method="execute">
+			<result name="success">/netpaygateway.jsp</result>
+			<result name="failure">/failure.jsp</result>
+
+		</action>
+		<action name="pay" class="edu.iiitb.controller.PaymentGateway"
 			method="execute">
 			<result name="success">/success.jsp</result>
 			<result name="failure">/failure.jsp</result>
 		</action>
+		
 
 		<action name="debitcard" class="edu.iiitb.controller.CardCredentialsAction"
 			method="execute">
-			<result name="success">/success.jsp</result>
+			<result name="success">/paymentgateway.jsp</result>
 			<result name="failure">/failure.jsp</result>
 		</action>
 
@@ -175,6 +211,52 @@
 			method="WishlistItemInsert">
 			<result type="json" />
 		</action>
+		 <action name="updateStatus" class="edu.iiitb.controller.UpdateStatus"
+			method="execute">
+			<result name="success" type="json" />
+		</action>
+		
+		
+		
+		<action name="updatePersonalInfo" method ="update" class="edu.iiitb.controller.PersonalInfo">
+            <result  name = "success" type="tiles">/accountPersonalInfo.tiles</result>
+            <result  name = "error" type="tiles">/accountPersonalInfo.tiles</result>
+        </action>
+        <action name="fetchPersonalInfo" method="select" class="edu.iiitb.controller.PersonalInfo">
+            <result  name = "success" type="tiles">/accountPersonalInfo.tiles</result>
+        </action>
+		<action name="fetchAccAddress" method="showAccAddress" class="edu.iiitb.controller.AddAccountAddress">
+		    <result name="success" type="tiles">/addAccountAddress.tiles</result>
+		</action>
+		<action name="updateAccountAddress" method="updateAccAddress" class="edu.iiitb.controller.AddAccountAddress">
+		    <result name="success" type="tiles">/addAccountAddress.tiles</result>
+		    <result name="error" type="tiles">/addAccountAddress.tiles</result>
+		</action>
+		<action name="fetchPasswordSetter" method="navigate" class="edu.iiitb.controller.ChangePassword">
+		    <result name="success" type="tiles">/changeAccountPassword.tiles</result>
+		</action>
+		<action name="fetchDeactivator" method="navigate" class="edu.iiitb.controller.DeactivateAccount">
+		    <result name="success" type="tiles">/deactivateAccount.tiles</result>
+		</action>
+		<action name="fetchUpdateEmail" method="navigate" class="edu.iiitb.controller.UpdateEmail">
+		    <result name="success" type="tiles">/updateAccountEmail.tiles</result>
+		</action>
+		<action name="updatePassword" method="update" class="edu.iiitb.controller.ChangePassword">
+		    <result name="success" type="tiles">/changeAccountPassword.tiles</result>
+		    <result name="error" type="tiles">/changeAccountPassword.tiles</result>
+		</action>
+		<action name="deactivate" method="deactivate" class="edu.iiitb.controller.DeactivateAccount">
+		    <result name="success" type="tiles">/deactivateAccount.tiles</result>
+		</action>
+		<action name="changeEmail" method="update" class="edu.iiitb.controller.UpdateEmail">
+		    <result name="success" type="tiles">/updateAccountEmail.tiles</result>
+		    <result name="error" type="tiles">updateAccountEmail.tiles</result> 
+		</action>
+		<action name="wallet_action" 
+            class="edu.iiitb.controller.WalletAction" 
+            method="execute">
+            <result name="success" type="tiles">/showWallet.tiles</result>
+      </action>
 
 	</package>
 

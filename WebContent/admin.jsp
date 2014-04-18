@@ -13,6 +13,7 @@
 <ul> 
 <li><h2><a href="<s:url action="showcatlist"/>">Products</a></h2></li>
 <li><h2><a href="<s:url action="showorderslist"/>">Orders </a></h2></li>
+<li><h2><a href="<s:url action="stockManagement"/>">Stock Update Alerts</a></h2></li>
 </ul>
 </body>
 </html>

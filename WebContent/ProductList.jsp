@@ -81,10 +81,27 @@ a:HOVER {
 						<b><s:property value="productName" /></font> </b> <br> 
 						<s:iterator value="productEAV">
 							<br>
-							<font color="#000000" size="1.5">
-							<s:property value="attributeName" /> : 
-						<s:property value="attributeValue" />
+						<s:if test="attributeName=='Discount'">
+							
+							<font color="#008000" size="4">
+							<b>
+						<s:property value="attributeName" /> : 
+						<s:property value="attributeValue" />%
+						</b></font>
+						</s:if>
+						<s:elseif test="attributeName=='General_Desc'">
+						<font color="#000000" size="3">
+						<b>
+						<s:property value="attributeValue" /></b>
 						</font>
+						</s:elseif>
+						<s:elseif test="attributeName=='Offer'">
+						<font color="#008000" size="4">
+						<b>
+						<s:property value="attributeName" /> : 
+						<s:property value="attributeValue" /></b>
+						</font>
+						</s:elseif>
 						</s:iterator>
 					</a>
 				</div>

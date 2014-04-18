@@ -2,6 +2,8 @@ package edu.iiitb.model;
 
 public class DisplayProd
 {
+	String attname;
+	String attvalue;
 	@Override
 	public String toString() {
 		return "DisplayProd [attname=" + attname + ", attvalue=" + attvalue
@@ -19,6 +21,5 @@ public class DisplayProd
 	public void setAttvalue(String attvalue) {
 		this.attvalue = attvalue;
 	}
-	String attname;
-	String attvalue;
+	
 }

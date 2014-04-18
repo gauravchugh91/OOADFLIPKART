@@ -106,11 +106,11 @@
 	});
 </script>
 <script type="text/javascript">
-	$(document)
-			.ready(
+	$(document).ready(
 					function() {
-						$("#load").click(function(event) {
+						$("#load").click(function(event) {			
 							$('#add1').load('add.jsp');
+						});
 						});
 
 						//ACCORDION
@@ -128,11 +128,11 @@
 					this._std_clickHandler(event, target);
 				}
 			};--%>
-	$("#accordion").accordion({
+	/*  $("#accordion").accordion({
 							header : ".accClass"
-						});
+						}); */
 
-						accordion._std_clickHandler = accordion._clickHandler;
+	 /*		accordion._std_clickHandler = accordion._clickHandler;
 
 						var $accordion = $("#accordion").accordion();
 
@@ -167,9 +167,74 @@
 							alert("Authenticate and Redirect to next page");
 						});
 
-					});
+					}); */
+					
+					
+					
 </script>
 
+<script type="text/javascript">
+function debitvalidate()
+{
+	 var a = document.getElementById("cnum1");
+var b = document.getElementById("emonth1");
+var c = document.getElementById("eyear1");
+var d = document.getElementById("cvv1");
+checkvalidate(a,b,c,d);
+}
+function creditvalidate()
+{
+var a = document.getElementById("cnum");
+var b = document.getElementById("emonth");
+var c = document.getElementById("eyear");
+var d = document.getElementById("cvv");
+checkvalidate(a,b,c,d);
+}
+</script>
+
+
+
+
+
+ <script type="text/javascript">
+            function checkvalidate(a,b,c,d)
+            {
+               
+
+                var e = a.value;
+                   var f = b.value;
+                var g = c.value;
+                 var h = d.value ; 
+               
+                var valid = true;
+                if(a.value.length!=16)
+                    {
+                        alert("Card number should consist 16 digits");
+                        valid = false;
+                    }
+                if(b.value.length!=2)
+                {
+                    alert("Enter month in format MM");
+                    valid = false;
+                }
+                if(c.value.length!=4)
+                {
+                    alert("Enter Year in format YYYY");
+                    valid = false;
+                }
+                if(d.value.length!=3)
+                {
+                    alert("Enter 3 digit cvv number");
+                    valid = false;
+                }
+                   else{
+                        if(isNaN(e) || isNaN(f)||isNaN(g) || isNaN(h)){
+                            alert("Enter a number");
+                    valid = false;}
+                } 
+                return valid;
+            };
+   </script>
 
 <script>
 	$(function() {
@@ -198,7 +263,7 @@
 
 		$("#save").click(function() {
 			var radio_button_value = $(':radio[name=addressid]:checked').val();
-			alert(radio_button_value);
+		/* 	alert(radio_button_value); */
 			$.ajax({
 				type : 'POST',
 				url : 'existingAdd?addressid=' + radio_button_value,
@@ -222,7 +287,10 @@ $('#ff').form({
 </head>
 <body>
 
-
+<div style="background-color: #005387;">
+						<a class="navbar-right" style="padding-top: 5%"
+							href="showHomePage"><img src="assets/images/flip.png" /></a>
+					</div>
 
 	<!-----------------------Accordian Division   --------------------------->
 	<div id="accordion">
@@ -280,7 +348,7 @@ $('#ff').form({
 								, <br>
 								<s:property value="pincode" />
 								, <br> <label>Phone:</label>
-								<s:property value="phone" />
+								<s:property  value="phone" />
 
 							</div>
 
@@ -352,7 +420,7 @@ $('#ff').form({
 				</ul>
 				<!-- <div id="tabs-1"></div> -->
 				<div id="tabs-1">
-					<form action="makepayment">
+					<form action="makepayment1">
 						<s:select headerKey="-1" headerValue="Select BANK" list="bank"
 							name="bank" cssStyle="width:150px" />
 						<br> <br>
@@ -364,23 +432,23 @@ $('#ff').form({
 				<div id="tabs-2">
 					<section class="credit-card visa gr-visa">
 						<div class="logo">Credit Card</div>
-						<form action="creditcard" method="post">
+						<form action="creditcard" method="post" onsubmit="return creditvalidate();">
 							<h2>Payment Details</h2>
 
 							<ul class="inputs">
 								<li><label>Card Number</label> <input type="text"
-									name="cardNumber" value="9842 9472 9457 9472"
-									class="full gr-input" required /></li>
+									name="cardNumber" value="XXXX XXXX XXXX XXXX"
+									class="full gr-input" required id="cnum"/></li>
 
 								<li class="expire last"><label>EXPIRY DATE (VALID
 										THRU)</label> <input type="text" name="expireMonth" value="MM"
-									size="10" class="month gr-input" required="required" /> <input
+									size="10" class="month gr-input" required="required" id="emonth"/> <input
 									type="text" name="expireYear" value="YYYY" size="10"
-									class="year gr-input" required="required" />
+									class="year gr-input" required="required" id="eyear" />
 									<div class="clearfix"></div></li>
 								<li class="cvc-code last"><label>CVC Code</label> <input
 									type="text" name="cvcCode" value="174" size="10"
-									class="gr-input" required="required" /></li>
+									class="gr-input" required="required" id="cvv" /></li>
 
 								<li><label>NAME ON CARD</label> <input type="text"
 									name="cardName" value="NAME" class="full gr-input"
@@ -400,23 +468,23 @@ $('#ff').form({
 				<div id="tabs-3">
 					<section class="credit-card visa gr-visa">
 						<div class="logo">Debit Card</div>
-						<form action="debitcard" method="post">
+						<form action="debitcard" method="post" onsubmit="return debitvalidate();">
 							<h2>Payment Details</h2>
 
 							<ul class="inputs">
 								<li><label>Card Number</label> <input type="text"
-									name="cardNumber" value="9842 9472 9457 9472"
-									class="full gr-input" required="required" /></li>
+									name="cardNumber" value="XXXX XXXX XXXX XXXX"
+									class="full gr-input" required="required" id="cnum1" /></li>
 
 								<li class="expire last"><label>EXPIRY DATE (VALID
 										THRU)</label> <input type="text" name="expireMonth" value="MM"
-									size="10" class="month gr-input" required="required" /> <input
+									size="10" class="month gr-input" required="required" id="emonth1"/> <input
 									type="text" name="expireYear" value="YYYY" size="10"
-									class="year gr-input" required />
+									class="year gr-input" required  id="eyear1"/>
 									<div class="clearfix"></div></li>
 								<li class="cvc-code last"><label>CVC Code</label> <input
-									type="text" name="cvcCode" value="174" size="10"
-									class="gr-input" required="required" /></li>
+									type="text" name="cvcCode" value="XXX" size="10"
+									class="gr-input" required="required" id="cvv1"/></li>
 
 								<li><label>NAME ON CARD</label> <input type="text"
 									name="cardName" value="NAME" class="full gr-input"

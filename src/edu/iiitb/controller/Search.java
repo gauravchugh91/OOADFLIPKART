@@ -62,13 +62,20 @@ public class Search {
 
 	public String execute() throws Exception {
 				
-		//common code start's
-		rootCategoryList = DB.RootCategoryList();	
-		for(int i=0; i<rootCategoryList.size(); i++)
-		{
-			rootCategoryList.get(i).setSubCategoryList(DB.SubCategoryList(rootCategoryList.get(i).getCategoryid()));
-		}
-		//common code end's
+		// common code start's
+				rootCategoryList = DB.RootCategoryList();
+				for (int i = 0; i < rootCategoryList.size(); i++) {
+					rootCategoryList.get(i)
+							.setSubCategoryList(
+									DB.SubCategoryList(rootCategoryList.get(i)
+											.getCategoryid()));
+					
+					for (int j = 0; j < rootCategoryList.get(i).getSubCategoryList().size(); j++) {
+							rootCategoryList.get(i).getSubCategoryList().get(j).setSubCategoryList(DB.SubCategoryList(rootCategoryList.get(i).getSubCategoryList().get(j).getCategoryid()));
+					}
+					
+				}
+				// common code end's
 		
 		subCategoryList = DB.SubCategoryList(0);
 		

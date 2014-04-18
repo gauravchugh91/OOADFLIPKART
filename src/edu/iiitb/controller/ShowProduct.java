@@ -1,20 +1,32 @@
 package edu.iiitb.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.opensymphony.xwork2.ActionContext;
 
 import edu.iiitb.database.DB;
 import edu.iiitb.model.CategoryDetails;
+import edu.iiitb.model.NavigationItem;
 import edu.iiitb.model.Product;
+import edu.iiitb.model.ProductEAV;
 
 public class ShowProduct {
 	
 	int productId;
 	Product product;
 	String islogin="false";
+	int check=1; // it is used to check the whether stock is 0 or not in Product.jsp page
 	
+	public int getCheck() {
+		return check;
+	}
+
+	public void setCheck(int check) {
+		this.check = check;
+	}
+
 	public String getIslogin() {
 		return islogin;
 	}
@@ -63,6 +75,18 @@ public class ShowProduct {
 		this.subCategoryList = subCategoryList;
 	}
 	
+	//product path start's
+		ArrayList<NavigationItem> productPath = new ArrayList<NavigationItem>();
+		public ArrayList<NavigationItem> getProductPath() {
+			return productPath;
+		}
+
+		public void setProductPath(ArrayList<NavigationItem> productPath) {
+			this.productPath = productPath;
+		}
+		//product path end's
+
+
 	/**
 	 * Author : Gaurav The following function gets a particular product from
 	 * database based on Product it along with all its attributes
@@ -73,13 +97,20 @@ public class ShowProduct {
 	public String execute() throws Exception {
 		
 		Map<String,Object> session = ActionContext.getContext().getSession(); 
-		//common code start's
-				rootCategoryList = DB.RootCategoryList();	
-				for(int i=0; i<rootCategoryList.size(); i++)
-				{
-					rootCategoryList.get(i).setSubCategoryList(DB.SubCategoryList(rootCategoryList.get(i).getCategoryid()));
+		// common code start's
+				rootCategoryList = DB.RootCategoryList();
+				for (int i = 0; i < rootCategoryList.size(); i++) {
+					rootCategoryList.get(i)
+							.setSubCategoryList(
+									DB.SubCategoryList(rootCategoryList.get(i)
+											.getCategoryid()));
+					
+					for (int j = 0; j < rootCategoryList.get(i).getSubCategoryList().size(); j++) {
+							rootCategoryList.get(i).getSubCategoryList().get(j).setSubCategoryList(DB.SubCategoryList(rootCategoryList.get(i).getSubCategoryList().get(j).getCategoryid()));
+					}
+					
 				}
-				//common code end's
+				// common code end's
 		
 		System.out.println("Product id is : " + productId);
 		if(session.get("userID")==null)
@@ -88,7 +119,47 @@ public class ShowProduct {
 			islogin="true";
 		product = DB.getProduct(productId);
 		product.setProductEAV(DB.getProductAttributes(productId));
-		System.out.println("Number of attributes are : " +  product.getProductEAV().size());
+		Iterator itr= product.getProductEAV().iterator();
+		while(itr.hasNext())
+		{
+			ProductEAV producteav= (ProductEAV)itr.next();
+			
+			if(producteav.getAttributeName().equals("Discount"))
+			{
+				
+				int discount=Integer.parseInt(producteav.getAttributeValue());
+				Iterator itr1= product.getProductEAV().iterator();
+				while(itr1.hasNext())
+				{
+					ProductEAV producteav1= (ProductEAV)itr1.next();
+					
+					if(producteav1.getAttributeName().equals("Price"))
+					{
+						
+						int price=Integer.parseInt(producteav1.getAttributeValue());
+						System.out.println("disount:"+discount);
+						System.out.println("Price:"+price);
+						int discountPrice=price-((price*discount)/100);
+						System.out.println("disount Price:"+discountPrice);
+						product.setDiscountPrice(discountPrice);
+						
+					}
+				}
+			}
+			else if (producteav.getAttributeName().equalsIgnoreCase("Stock"))
+			{
+				if(Integer.parseInt(producteav.getAttributeValue())==0)
+				{
+				    check=0;	
+				}
+			}
+			
+		}
+		
+		
+		DB.setNavigation(productPath, product.getCategoryId());
+		
+		//System.out.println("Number of attributes are : " +  product.getProductEAV().size());
 		subCategoryList = DB.SubCategoryList(0);
 		return "success";
 	}

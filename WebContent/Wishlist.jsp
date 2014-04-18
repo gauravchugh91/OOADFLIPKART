@@ -30,7 +30,7 @@ a:hover {
 <title>My Wishlist Page</title>
 </head>
 <body>
-	<div>
+	 <div>
 		<div
 			style="background-color: DodgerBlue; width: 200px; height: 35px; border: 1px solid #000">
 			<h4>My Account</h4>
@@ -38,14 +38,14 @@ a:hover {
 		<br> <b> ORDERS<b><br> <br> <a href=""><b>My
 						Orders</b></a><br>
 				<hr size=2 width=200 align=left> <b> PAYMENTS<b><br>
-						<br> <a href=""><b>Wallet</b></a></br>
+						<br> <a href="wallet_action"><b>Wallet</b></a></br>
 						<hr size=2 width=200 align=left> <b> MY STUFF<b><br>
-								<br> <b><font color="DodgerBlue"> My Wishlist</font></b><br>
-								<a href=""><b> Recommendations For You</b></a><br>
+								<br> <a href="displaywishlist"><b> My Wishlist</b></a><br>
 								<hr size=2 width=200 align=left> <b> SETTINGS</b><br>
-								<br> <a href=""><b>Personal Information</b></a><br> <a
-								href=""><b>Change Password</b></a><br> <a href=""><b>Addresses</b></a><br>
-								<a href=""><b>Profile Settings</b></a><br>
+								<br> <a href="fetchPersonalInfo"><b>Personal Information</b></a><br> <a
+								href="fetchPasswordSetter"><b>Change Password</b></a><br> <a href="fetchAccAddress"><b>Addresses</b></a><br>
+								<a href="fetchDeactivator"><b>Deactivate Account</b></a><br>
+								<a href="fetchUpdateEmail"><b>Update Email</b></a><br>
 								<hr size=2 width=200 align=left> <br>
 	</div>
 	<div class="divison1">

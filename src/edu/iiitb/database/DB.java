@@ -1,7 +1,11 @@
 package edu.iiitb.database;
 
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import edu.iiitb.dbconfig.DBConnection;
@@ -11,10 +15,13 @@ import edu.iiitb.model.Cart;
 import edu.iiitb.model.CartItem;
 import edu.iiitb.model.DeliveryAddress;
 import edu.iiitb.model.DisplayProd;
+import edu.iiitb.model.NavigationItem;
 import edu.iiitb.model.Order;
 import edu.iiitb.model.OrderItem;
 import edu.iiitb.model.Product;
 import edu.iiitb.model.ProductEAV;
+import edu.iiitb.model.PersonalInfoModel;
+import edu.iiitb.model.StockManagement;
 import edu.iiitb.model.UserWho;
 import edu.iiitb.model.Product;
 import edu.iiitb.model.ProductEAV;
@@ -47,7 +54,8 @@ public class DB {
 		Product prod = new Product();
 
 	}
-
+	//pratyu start's
+	
 	public static ArrayList<Product> getProducts() {
 		Connection con;
 		try {
@@ -199,6 +207,8 @@ public class DB {
 		int price = 0;
 		int quantity = 1;
 		int subtotal;
+		int discount=0;
+		int discountPrice;
 		String deliverydetails = "Will be delivered within next 4 days";
 		// System.out.println(deliverydetails);
 		for (int i = 0; i < product.getProductEAV().size(); i++) {
@@ -207,9 +217,25 @@ public class DB {
 				price = Integer.parseInt(product.getProductEAV().get(i)
 						.getAttributeValue());
 			}
+			
+			else if(product.getProductEAV().get(i).getAttributeName().equals("Discount"))
+			{
+				discount = Integer.parseInt(product.getProductEAV().get(i)
+						.getAttributeValue());
+			}
+			
+		
+		
 		}
-		subtotal = price * quantity;
-
+		if (discount==0)
+		    subtotal = price * quantity;
+		else
+		{
+			discountPrice= price-((price* discount)/100);
+			subtotal = discountPrice* quantity;
+			price=discountPrice;
+		
+		}
 		try {
 			con = DBConnection.getDBConnection();
 			String query = "insert into cartitem(cartid,productid,quantity,price,subtotal,deliverydetails) values(?,?,?,?,?,?)";
@@ -288,16 +314,25 @@ public class DB {
 		}
 	}
 
-	public static void editCartItem(int productId, int quantity, int cartId) {
+	public static void editCartItem(int productId,int price, int quantity,int tempQuantity, int cartId) {
 		Connection con;
+		int subtotal = 0;
 		try {
 			con = DBConnection.getDBConnection();
-			String query = "update cartitem set quantity= ? , subtotal= price*quantity where cartid=? and productid=?";
+			if(tempQuantity!=0)
+			{
+				subtotal = price*tempQuantity;
+				System.out.println("Ankesh check: subtotal"+subtotal);
+			}
+			else
+				subtotal= price*quantity;
+			String query = "update cartitem set quantity= ? , subtotal=? where cartid=? and productid=?";
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ps.setInt(1, quantity);
-			ps.setInt(2, cartId);
-			ps.setInt(3, productId);
+			ps.setInt(2, subtotal);
+			ps.setInt(3, cartId);
+			ps.setInt(4, productId);
 			ps.executeUpdate();
 			con.close();
 		} catch (Exception e) {
@@ -376,7 +411,7 @@ public class DB {
 		Connection con;
 		con = DBConnection.getDBConnection();
 		ArrayList<Product> productList = new ArrayList<Product>();
-		String query = "select * from product p where p.productname = '"
+		String query = "select * from product p where p.productname like '"
 				+ searchName + "'";
 		PreparedStatement ps = (PreparedStatement) con.prepareStatement(query);
 		ResultSet resultSet = ps.executeQuery();
@@ -393,7 +428,7 @@ public class DB {
 			con.close();
 			return productList;
 		} else {
-			String query1 = "select * from product p, category c where c.categoryid = p.categoryid and c.categoryname = '"
+			String query1 = "select * from product p, category c where c.categoryid = p.categoryid and c.categoryname like '"
 					+ searchName + "'";
 			PreparedStatement ps1 = (PreparedStatement) con
 					.prepareStatement(query1);
@@ -411,7 +446,7 @@ public class DB {
 				con.close();
 				return productList;
 			} else {
-				String query2 = "select * from product p, category c1, category c2 where c1.categoryid = p.categoryid and c2.categoryid = c1.parentid and c2.categoryname = '"
+				String query2 = "select * from product p, category c1, category c2 where c1.categoryid = p.categoryid and c2.categoryid = c1.parentid and c2.categoryname like '"
 						+ searchName + "'";
 				PreparedStatement ps2 = (PreparedStatement) con
 						.prepareStatement(query2);
@@ -429,12 +464,32 @@ public class DB {
 					con.close();
 					return productList;
 				} else {
-					con.close();
-					return productList;
+					String query3 = "select * from product p, category c1, category c2, category c3 where c1.categoryid = p.categoryid and c2.categoryid = c1.parentid and c3.categoryid = c2.parentid and c3.categoryname like '"
+							+ searchName + "'";
+					PreparedStatement ps3 = (PreparedStatement) con
+							.prepareStatement(query3);
+					ResultSet resultSet3 = ps3.executeQuery();
+					if (resultSet3.next()) {
+
+						do {
+							Product product = new Product();
+							product.setProductId(resultSet3.getInt("productid"));
+							product.setProductName(resultSet3
+									.getString("productname"));
+
+							productList.add(product);
+						} while (resultSet3.next());
+						con.close();
+						return productList;
+					} else {
+						con.close();
+						return productList;
+					}
 				}
 			}
 		}
 	}
+
 
 	public static ArrayList<Product> getProductsList(int category) {
 		Connection con;
@@ -466,17 +521,20 @@ public class DB {
 
 	public static UserWho addNewAccount(String email, String password) {
 		Connection con;
+		System.out.println("email:" + email);
 		try {
+			int newId;
+
 			con = DBConnection.getDBConnection();
 			System.out.println("we r in addNewAccount");
 
 			String prev_Account = "select userid from usercredentials where "
 					+ "email='" + email + "'";
+
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(prev_Account);
 			ResultSet resultSet = ps.executeQuery();
-			System.out.println("prev_Account successfully executed!");// +
-																		// resultSet.getInt(1));
+			System.out.println("prev_Account successfully executed!");
 
 			String prev_Customer = "select userid from customer where email='"
 					+ email + "'";
@@ -490,7 +548,7 @@ public class DB {
 			if (resultSet.next()) {
 				System.out.println("Email already taken by "
 						+ resultSet.getInt(1));
-				con.close();
+
 				return null;
 			}
 
@@ -498,7 +556,7 @@ public class DB {
 			// not have an account
 
 			else if (resultSet1.next()) {
-				int newId = resultSet1.getInt(1);
+				newId = resultSet1.getInt(1);
 				String loginTableInsert = "insert into usercredentials (userid,email,password)"
 						+ " values ("
 						+ newId
@@ -512,18 +570,17 @@ public class DB {
 								Statement.RETURN_GENERATED_KEYS);
 
 				ps2.executeUpdate();
-				ResultSet newUser = ps2.getGeneratedKeys();
+				// ResultSet newUser = ps2.getGeneratedKeys();
 
 				UserWho user = new UserWho();
-				if (newUser.next()) {
-					user.setUserID(newUser.getInt(1));
-					user.setEmail(newUser.getString(2));
-					user.setPassword(newUser.getString(3));
-					user.setIsAdmin(newUser.getInt(4));
-					user.setIsActive(newUser.getInt(5));
-				}
+				System.out.println("heyyyyyyyy!");
+				user.setUserID(newId);
+				System.out.println(user.getUserID());
+				user.setEmail(email);
+				System.out.println(user.getEmail());
+				System.out.println("set user email:" + user.getEmail() + " "
+						+ user.getUserID() + " " + user.getPassword());
 
-				con.close();
 				System.out.println("custTableInsert successfully executed!");
 				return user;
 
@@ -544,22 +601,8 @@ public class DB {
 				ResultSet usID = ps1.getGeneratedKeys();
 				System.out.println("1st insert done! ");
 				if (usID.next()) {
-					int newId = usID.getInt(1);
+					newId = usID.getInt(1);
 					System.out.println("value of usID: " + newId);
-					// student.setStudent_id(newId);
-
-					/*
-					 * PreparedStatement ps1 = (PreparedStatement) con
-					 * .prepareStatement(custTableInsert); ps1.executeUpdate();
-					 * System.out.println("1st insert done! "); //2. not
-					 * executing from here // 'userID' of credentials is the key
-					 * refering to 'userID of // usercredentials . String
-					 * newUser = "select userid from customer where" +
-					 * " email='" + email + "'"; PreparedStatement ps2 =
-					 * (PreparedStatement) con .prepareStatement(newUser);
-					 * 
-					 * ResultSet usID = ps2.executeQuery();
-					 */
 
 					String loginTableInsert = "insert into usercredentials (userid,email,password)"
 							+ " values ("
@@ -573,21 +616,14 @@ public class DB {
 									Statement.RETURN_GENERATED_KEYS);
 
 					ps2.executeUpdate();
-					ResultSet newUser = ps2.getGeneratedKeys();
+					// ResultSet newUser = ps2.getGeneratedKeys();
 
 					UserWho user = new UserWho();
-					if (newUser.next()) {
-						user.setUserID(newUser.getInt(1));
-						System.out.println(user.getUserID());
-						user.setEmail(newUser.getString(2));
-						System.out.println(user.getEmail());
-						user.setPassword(newUser.getString(3));
-						System.out.println(user.getPassword());
-						user.setIsAdmin(newUser.getInt(4));
-						System.out.println(user.getIsAdmin());
-						user.setIsActive(newUser.getInt(5));
-						System.out.println(user.getIsAdmin());
-					}
+					System.out.println("heyyyyyyyy!");
+					user.setUserID(newId);
+					System.out.println(user.getUserID());
+					user.setEmail(email);
+					System.out.println(user.getEmail());
 
 					con.close();
 					System.out
@@ -648,17 +684,187 @@ public class DB {
 		return null;
 	}
 
-	public static String isEmailValid(String email, String password) {
+	// forget password
+	public static String seekPassword(String email) {
+		Connection con;
+		String password = null;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select password from usercredentials where email ='"
+					+ email + "'";
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
 
-		if (email == " " || email == null
-				|| email.indexOf('@') < email.indexOf('.')) {
-			return "Please specify a VALID Email Address";
-		} else if (password == null || password == " ") {
-			return "Please specify a password";
-		} else {
-			return "Email/Password combination is wrong.";
+			if (resultSet.next()) {
+				password = resultSet.getString(1);
+				System.out.println("Password:" + password);
+			}
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
+		return password;
+
 	}
+
+	// .........Account->Add Address: Rishi's Part---------------
+
+	public static DeliveryAddress getAccountAddress(int userid) {
+		Connection con;
+		DeliveryAddress acAddress = new DeliveryAddress();
+		try {
+			con = DBConnection.getDBConnection();
+
+			String query = "select address,city,state,country,pincode,phone from customer "
+					+ "where userid=" + userid;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+           if(resultSet.next()) {
+			acAddress.setAddress(resultSet.getString(1));
+			acAddress.setCity(resultSet.getString(2));
+			acAddress.setState(resultSet.getString(3));
+			acAddress.setCountry(resultSet.getString(4));
+			acAddress.setPincode(resultSet.getInt(5));
+			acAddress.setPhone(resultSet.getInt(6));
+			System.out.println("City in DB: "+acAddress.getCity() + acAddress.getPhone());
+			
+           }
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return acAddress;
+
+	}
+
+	public static String selectAccountHolder(int userid) {
+		Connection con;
+		String name = null;
+		try {
+			con = DBConnection.getDBConnection();
+		String query = "select fname,lname from customer where userid="+userid;
+		PreparedStatement ps = (PreparedStatement) con
+				.prepareStatement(query);
+		ResultSet resultSet = ps.executeQuery();
+		if(resultSet.next()) {
+		name = resultSet.getString("fname")+" "+resultSet.getString("lname");
+		}		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return name;
+		
+	}
+
+	public static int updateAccount(String query) {
+		Connection con;
+		try {
+	        int rs = 0;
+			con = DBConnection.getDBConnection();
+
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			rs = ps.executeUpdate();
+			return rs;
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;
+
+	}
+
+	// ............Account->Personal Info ------------------------------
+
+	public static PersonalInfoModel getPersonalInfo(int userid) {
+		Connection con;
+		PersonalInfoModel p_info = new PersonalInfoModel();
+		try {
+			con = DBConnection.getDBConnection();
+
+			String query = "select fname,lname,gender,phone from customer "
+					+ "where userid=" + userid;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+
+			if (resultSet.next()) {
+				p_info.setFname(resultSet.getString(1));
+				p_info.setLname(resultSet.getString(2));
+				p_info.setGender(resultSet.getString(3));
+				//Integer phone = resultSet.getInt(4);
+				//p_info.setPhone(phone.toString());
+				p_info.setPhone(resultSet.getInt(4));
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return p_info;
+
+	}
+	
+	//................Change Password.................
+	
+	public static String correctPassword(String password,int userid) {
+		Connection con;
+		try {
+			con=DBConnection.getDBConnection();
+			String query="select password from usercredentials where userid ="+ userid;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			if(resultSet.next()) {
+			 String pass= resultSet.getString("password");
+			 System.out.println("password:"+pass);
+			 if(password.equals(pass)) {
+				 return "correct";
+			 }
+			}		
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return "wrong";	
+		
+	}
+
+	// End of Rishi's code!...................................................
 
 	public static ArrayList<category> getCategories(int came) {
 		Connection con;
@@ -694,7 +900,7 @@ public class DB {
 		ArrayList<Order> orderList = new ArrayList<Order>();
 		try {
 			con = DBConnection.getDBConnection();
-			String query = "select * from flipkart.order";
+			String query = "select * from flipkart3.order";
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
@@ -775,13 +981,13 @@ public class DB {
 
 	}
 
-	public static int alreadyExists(String tablename, String field, String value) {
+	public static int alreadyExistsCat(String tablename, String field, String value,int parent) {
 		Connection con;
 		int exists = 0;
 		try {
 			con = DBConnection.getDBConnection();
 			String query = "select 1 from " + tablename + " where " + field
-					+ " ='" + value + "'";
+					+ " ='" + value + "' and parentid="+parent;
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
@@ -800,14 +1006,204 @@ public class DB {
 		return exists;
 
 	}
+	
+	public static void setOrderItems(ArrayList<OrderItem> ordItms,int orderid) {
+		Connection con;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select * from orderitem where orderid="+orderid;
+				
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				OrderItem ord = new OrderItem();
+				ord.setOrderid(rs.getInt("orderid"));
+				ord.setOrderitemid(rs.getInt("orderitemid"));
+				ord.setDeliverydate(rs.getDate("deliverydate"));
+				ord.setOrderstatus(rs.getString("orderstatus"));
+				ord.setPrice(rs.getInt("price"));
+				ord.setProductid(rs.getInt("productid"));
+				ord.setQuantity(rs.getInt("quantity"));
+				ord.setSubtotal(rs.getInt("subtotal"));
+				ArrayList<String> status = new ArrayList<String>();
+				switch(ord.getOrderstatus())
+				{
+				case "Placed" :
+				   status.add("Placed");
+			       status.add("Packing");
+			       status.add("Dispatched");
+			       status.add("Delivered");
+			       
+			       break;
+				case "Packing" :
+					status.add("Packing");
+					 status.add("Dispatched");
+				       status.add("Delivered");
+				       
+				       break;
+				case "Dispatched":
+				status.add("Dispatched");
+				 status.add("Delivered");
+				 break;
+				case "Delivered":
+					status.add("Delivered");
+					status.add("Return request");
+					break;
+				case "Return request" :
+					status.add("Return request");
+					status.add("Returned");
+					break;
+				case "Returned" :
+					status.add("Returned");
+					status.add("Order Closed");
+					break;
+				
+					
+				}
+				ord.setValidStatuses(status);
+				ordItms.add(ord);
+			}
+			con.close();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	public static int alreadyExistsProd(String tablename, String field, String value,int cat) {
+		Connection con;
+		int exists = 0;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select 1 from " + tablename + " where " + field
+					+ " ='" + value + "' and categoryid="+cat;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				exists = resultSet.getInt("1");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return exists;
+
+	}
+	public static void setOrderItemStatus(int id,String status) {
+		Connection con;
+		int exists = 0;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "update orderitem set orderstatus='"+status+"' where orderitemid="+id;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			int resultSet = ps.executeUpdate();
+			System.out.println("updated :"+resultSet);
+			if(resultSet==1 && status.equals("Returned"))
+			{
+				String walletQ = "select walletamount,w.userid  from wallet w,flipkart3.order o, orderitem m where w.userid=o.userid and o.orderid=m.orderid and m.orderitemid="+id;
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(walletQ);
+				ResultSet rs = ps2.executeQuery();
+				if(rs.next())
+				{
+					
+					System.out.println("Wallet amount is:"+rs.getInt("walletamount"));
+					int walletamount = rs.getInt("walletamount");
+					int userid = rs.getInt(2);
+					String getSubtotal = "select subtotal from orderitem where orderitemid="+id;
+					PreparedStatement ps3 = (PreparedStatement) con
+							.prepareStatement(getSubtotal);
+					ResultSet rs3 = ps3.executeQuery();
+					if(rs3.next())
+					{
+						int subtotal = rs3.getInt("subtotal");
+						subtotal =subtotal+walletamount;
+						String updateW = "update wallet set walletamount="+subtotal+" where userid="+userid;
+						System.out.println("trying to update wallet.."+updateW);
+						PreparedStatement ps4 = (PreparedStatement) con
+								.prepareStatement(updateW);
+						int resultSet4 = ps4.executeUpdate();
+						System.out.println("Update wallet as:"+resultSet4);
+						
+					}
+					
+				}
+				
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return;
+
+	}
+	public static void setStockManagement(ArrayList<StockManagement> products) {
+		Connection con;
+		int exists = 0;
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select p.categoryid,p.productname,s.attributevalue as stock,t.attributevalue as threshold from product p,producteav s,producteav t where p.productid=s.productid and s.attributevalue<t.attributevalue and s.attributeid=8 and t.attributeid=9 and s.productid=t.productid";
+			
+			
+			
+			//select p.categoryid,p.productname,s.attributevalue as stock,t.attributevalue as threshold from product p,producteav s,producteav t where p.productid=s.productid and s.attributeid=8 and t.attributeid=9 and s.productid=t.productid and s.attributevalue<t.attributevalue";
+
+			
+			
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next())
+			{
+				StockManagement sm = new StockManagement();
+				sm.setProductname(rs.getString(2));
+				sm.setStock(rs.getInt(3));
+				sm.setThreshold(rs.getInt(4));
+			
+				sm.setCategoryid(rs.getInt(1));
+				if(sm.getStock()<sm.getThreshold()) 
+				products.add(sm);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return;
+
+	}
+
+
 
 	public static int insertCategory(String cat, int parent) {
 		Connection con;
 		int resultSet = 0;
 		try {
 			con = DBConnection.getDBConnection();
+			System.out.println("parent for this is :"+parent);
 			int level = DB.CheckLevel(parent);
-			int exists = alreadyExists("category", "categoryname", cat);
+			System.out.println("level of parent :"+level);
+			int exists = alreadyExistsCat("category", "categoryname", cat,parent);
 			if (exists == 0) {
 				if (level == 1) {
 					int inslevel = 2;
@@ -818,8 +1214,16 @@ public class DB {
 							.prepareStatement(query);
 					resultSet = ps.executeUpdate();
 
-				} else {
-
+				} else if(level==2) {
+					
+					
+					String query = "insert into category(categoryname,parentid,level) values('"
+							+ cat + "'," + parent + ",3)";
+					PreparedStatement ps = (PreparedStatement) con
+							.prepareStatement(query);
+					resultSet = ps.executeUpdate();
+				}
+				else {
 					String query = "insert into category(categoryname,parentid,level) values('"
 							+ cat + "'," + parent + ",1)";
 					PreparedStatement ps = (PreparedStatement) con
@@ -839,24 +1243,26 @@ public class DB {
 		return resultSet;
 	}
 
+
 	public static int insertProduct(String prodname, String catid,
 			ArrayList<String> atts, ArrayList<String> attnames) {
 		Connection con;
 		int resultSet = 0;
 		int prodid = 0;
-		int exists = DB.alreadyExists("product", "productname", prodname);
+		int exists = DB.alreadyExistsProd("product", "productname", prodname,Integer.parseInt(catid));
 		if (exists == 0) {
+			
 			try {
 				con = DBConnection.getDBConnection();
 				String insertProduct = "insert into product(productname,categoryid) values('"
 						+ prodname + "'," + catid + ")";
-				// System.out.println("inserting prod:"+insertProduct);
+				 System.out.println("inserting prod:"+insertProduct);
 				PreparedStatement ps = (PreparedStatement) con
 						.prepareStatement(insertProduct);
 				resultSet = ps.executeUpdate();
 				String getid = "select productid from product where productname = '"
 						+ prodname + "' and categoryid=" + catid;
-				// System.out.println("getting product id"+ getid);
+				 System.out.println("getting product id"+ getid);
 				PreparedStatement ps2 = (PreparedStatement) con
 						.prepareStatement(getid);
 				ResultSet get = ps2.executeQuery();
@@ -867,15 +1273,16 @@ public class DB {
 				}
 				int i = 0;
 				for (String attvalue : atts) {
-					String name = attnames.get(++i);
+					String name = attnames.get(i++);
 					int id = getAttributeId(name);
-
+                    if(!attvalue.isEmpty() && !attvalue.equals(" ")) {
 					String query = "insert into producteav(productid,attributeid,attributevalue) values("
-							+ prodid + "," + id + "," + attvalue + ")";
-					// System.out.println("inserting into eav"+query);
+							+ prodid + "," + id + ",'" + attvalue + "')";
+				   System.out.println("inserting into eav"+query);
 					PreparedStatement ps3 = (PreparedStatement) con
 							.prepareStatement(query);
 					resultSet = ps3.executeUpdate();
+                    }
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -889,6 +1296,37 @@ public class DB {
 
 		return resultSet;
 	}
+	public static int editProduct(ArrayList<String> attvalues,String prod) {
+		Connection con;
+		int resultSet = 0;
+		
+		try {
+				con = DBConnection.getDBConnection();
+				ArrayList<Attribute> atts = DB.getAttributes();
+				int i=0;
+				for(Attribute a:atts) 
+				{	
+				String editProduct = "update producteav set attributevalue='"+attvalues.get(i++)+"' where attributeid="+a.AttrId+" and productid=(select productid from product where productname='"+prod+"')";
+				
+				System.out.println("inserting prod:"+editProduct);
+			    PreparedStatement ps = (PreparedStatement) con
+						.prepareStatement(editProduct);
+				resultSet = ps.executeUpdate();
+				}
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+
+		return resultSet;
+	}
+
 
 	public static int getAttributeId(String came) {
 		Connection con;
@@ -948,8 +1386,112 @@ public class DB {
 		return returnval;
 
 	}
+	public static void setNavigation(ArrayList<NavigationItem> nav,int clicked_id) {
+		Connection con;
+		int returnval = 0;
+		
+        System.out.println("came with category id and checking for level:"+clicked_id);
+		try {
+			con = DBConnection.getDBConnection();
+			String query = "select level from category where categoryid="
+					+ clicked_id;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
 
-	public static ArrayList<DisplayProd> getThisProd(String prodname) {
+				returnval = (resultSet.getInt("level"));
+
+			}
+			if(returnval==0)
+			{
+				NavigationItem navItem = new NavigationItem();
+				navItem.setCategory_id(0);
+				navItem.setCatNavName("Home");
+				nav.add(navItem);
+				System.out.println("in db, updated nav as"+nav);
+			}
+			else if(returnval==1)
+			{
+				String retNav = "select categoryname from category where categoryid="+clicked_id;
+				System.out.println("querying nav as:"+retNav);
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(retNav);
+				ResultSet rs = ps2.executeQuery();
+				NavigationItem navItem = new NavigationItem();
+				navItem.setCategory_id(0);
+				navItem.setCatNavName("Home>");
+				nav.add(navItem);
+				while (rs.next()) {
+					NavigationItem navItem2 = new NavigationItem();
+					 navItem2.setCatNavName(rs.getString("categoryname"));
+					 navItem2.setCategory_id(clicked_id);
+	            	 nav.add(navItem2);
+				}
+				System.out.println("in db, updated nav as"+nav);
+			}
+			else if(returnval==2)
+			{
+				String retNav ="select g.categoryid as grandid,g.categoryname as grand, p.categoryname as parent from category p,category g where p.parentid=g.categoryid and p.categoryid="+clicked_id;
+				System.out.println("querying nav as:"+retNav);
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(retNav);
+				ResultSet rs = ps2.executeQuery();
+				NavigationItem navItem = new NavigationItem();
+				navItem.setCategory_id(0);
+				navItem.setCatNavName("Home>");
+				nav.add(navItem);
+				while (rs.next()) {
+					NavigationItem navItem2 = new NavigationItem();
+					 navItem2.setCatNavName(rs.getString(2)+">");
+					 navItem2.setCategory_id(rs.getInt(1));
+	            	 nav.add(navItem2);
+	            	 NavigationItem navItem3 = new NavigationItem();
+					 navItem3.setCatNavName(rs.getString(3));
+					 navItem3.setCategory_id(clicked_id);
+	            	 nav.add(navItem3);
+				}
+				System.out.println("in db, updated nav as"+nav);
+			}
+			else if(returnval==3)
+			{
+				String retNav ="select g.categoryid as grandid,g.categoryname as grand, p.categoryid as parentid,p.categoryname as parent,c.categoryname from category p,category g,category c  where g.categoryid=p.parentid and p.categoryid=c.parentid and c.categoryid="+clicked_id;
+				System.out.println("querying nav as:"+retNav);
+				PreparedStatement ps2 = (PreparedStatement) con
+						.prepareStatement(retNav);
+				ResultSet rs = ps2.executeQuery();
+				NavigationItem navItem = new NavigationItem();
+				navItem.setCategory_id(0);
+				navItem.setCatNavName("Home>");
+				nav.add(navItem);
+				while (rs.next()) {
+					NavigationItem navItem2 = new NavigationItem();
+					 navItem2.setCatNavName(rs.getString(2)+">");
+					 navItem2.setCategory_id(rs.getInt(1));
+	            	 nav.add(navItem2);
+	            	 NavigationItem navItem3 = new NavigationItem();
+					 navItem3.setCatNavName(rs.getString(4)+">");
+					 navItem3.setCategory_id(rs.getInt(3));
+	            	 nav.add(navItem3);
+	            	 NavigationItem item4 = new NavigationItem();
+	            	 item4.setCategory_id(clicked_id);
+	            	 item4.setCatNavName(rs.getString(5));
+	            	 nav.add(item4);
+				}
+				System.out.println("in db, updated nav as"+nav);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	public static ArrayList<DisplayProd> getThisProd(String prodname,int catid) {
 		Connection con;
 		ArrayList<DisplayProd> sendingThis = new ArrayList<DisplayProd>();
 		int attid = 0;
@@ -964,17 +1506,20 @@ public class DB {
 				DisplayProd p = new DisplayProd();
 				attid = (resultSet.getInt("attributeid"));
 				attname = resultSet.getString("attributename");
+				System.out.println("came till here...");
 				String getvalue = "select attributevalue from producteav where productid=(select productid from product where productname='"
-						+ prodname + "') and attributeid=" + attid;
+						+ prodname + "' and categoryid="+catid+") and attributeid=" + attid;
 				ps = (PreparedStatement) con.prepareStatement(getvalue);
 				ResultSet rs = ps.executeQuery();
 				String attval;
-				while (rs.next()) {
-					attval = rs.getString("attributevalue");
-					p.setAttname(attname);
-					p.setAttvalue(attval);
-					sendingThis.add(p);
+				while(rs.next())
+				{	attval = rs.getString("attributevalue");
+					if(!attval.isEmpty())
+						p.setAttvalue(attval);
 				}
+					p.setAttname(attname);
+					sendingThis.add(p);
+				
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -989,13 +1534,16 @@ public class DB {
 
 	}
 
+
+
+	
 	/******************** Chirag Saraiya *************************************/
 
 	// For Adding new address//
-	public static void AddDeliveryAddress(int userid, String name,
+	public static int AddDeliveryAddress(int userid, String name,
 			String address, String city, String state, String country,
 			int pincode, String email, int phone) {
-
+int addid=0;
 		Connection con;
 		try {
 			con = DBConnection.getDBConnection();
@@ -1017,9 +1565,8 @@ public class DB {
 			}*/
 			
 			String query2 = "insert into address (userid,name,address,city,state,country,pincode,email,phone) values (?,?,?,?,?,?,?,?,?)";
-			PreparedStatement ps = (PreparedStatement) con
-					.prepareStatement(query2);
-			
+			PreparedStatement	 ps = (PreparedStatement) con.prepareStatement(
+						query2, Statement.RETURN_GENERATED_KEYS);
 				ps.setInt(1, userid);	
 			ps.setString(2, name);
 			ps.setString(3, address);
@@ -1031,6 +1578,11 @@ public class DB {
 			ps.setInt(9, phone);
 
 			ps.executeUpdate();
+			ResultSet rs = ps.getGeneratedKeys();
+			if (rs.next()) {
+				addid= rs.getInt(1);
+			}
+			
 			con.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -1040,50 +1592,36 @@ public class DB {
 			e.printStackTrace();
 
 		}
-
+		return addid;
 	}
 
 	// checking
-	public static String checkUserCardCredential(int cardNumber,
-			int expireMonth, int expireYear, int cvcCode, String cardName) {
+	public static int checkUserCardCredential(BigDecimal cardNumber,
+			int expireMonth, int expireYear, int cvcCode, String cardName,String cardType) {
 		Connection con;
+		int bankcardid=0;
+		String ct;
 		try {
-			CardCredentials cc = new CardCredentials();
 			con = DBConnection.getDBConnection();
-			/*
-			 * since user id is a foreign key which refers to customer there for
-			 * we have to fill customer table first
-			 */
-			String query1 = "select ownername,cardno,cardcvv,cardexpyear,cardexpmonth,cardtype,debitbalance from bankcards where bankcards.cardno=?";
+			String query1 = "select bankcardid from bankcards where cardtype='"+cardType+"' and cardno="+cardNumber+" and ownername='"+cardName+"' and cardexpmonth="+expireMonth+" and cardexpyear="+expireYear+" and cardcvv="+cvcCode+";";
+			
+			System.out.print(query1);
 			PreparedStatement ps1 = (PreparedStatement) con
 					.prepareStatement(query1);
-			ps1.setInt(1, cardNumber);
 			ResultSet resultSet = ps1.executeQuery();
-			if (resultSet.next()) {
-				cc.setCardName(resultSet.getString("ownername"));
-				cc.setCardNumber(resultSet.getInt("cardno"));
-				cc.setCvcCode(resultSet.getInt("cardcvv"));
-				cc.setExpireYear(resultSet.getInt("cardexpyear"));
-				cc.setExpireMonth(resultSet.getInt("cardexpmonth"));
-				cc.setCardType(resultSet.getString("cardtype"));
-				cc.setDebitBalance(resultSet.getInt("debitbalance"));
-
-			} else
-				return "failure";
-
-			System.out.println(cc.cardName + " " + cc.cardNumber + " "
-					+ cc.cvcCode + " " + cc.expireMonth + " " + cc.expireYear);
-			System.out.println(cardName + " " + cardNumber + " " + cvcCode
-					+ " " + expireMonth + " " + expireYear);
-			con.close();
-
-			if ((cc.cardName).equals(cardName) && (cc.cardNumber == cardNumber)
-					&& (cc.expireMonth == expireMonth)
-					&& (cc.expireYear == expireYear) && (cc.cvcCode == cvcCode))
-				return "success";
-			else
-				return "failure";
-
+			if(resultSet.next())
+			{
+				bankcardid=resultSet.getInt("bankcardid");
+				return bankcardid;
+				
+			}
+			else 
+				
+				{con.close();
+				return 0;
+				}
+			
+			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -1092,9 +1630,166 @@ public class DB {
 			e.printStackTrace();
 
 		}
-
-		return "success";
+		return 0;
+		
+	 // returns default 0 value if card details are not correct 
 	}
+	/* Kavya : Payment Gateway*/
+	
+	/*****
+	 * 
+	 * 
+	 * 
+	 * @param bank
+	 */
+	public static String Payfromnetbank(String username, String password, int cartid){
+		Connection con;
+		int accbalance=0;
+		int netbankid;
+		int newbalance;
+		try {
+			con = DBConnection.getDBConnection();
+			String query1 = "select netbankid,accbalance from netbank where accountid='"+username+"' and accountpass='"+password+"';";
+			//System.out.print(query1);
+			int Amount = 0;
+			PreparedStatement ps1 = (PreparedStatement) con
+					.prepareStatement(query1);
+			ResultSet resultSet = ps1.executeQuery();
+			if(resultSet.next())
+			{
+				accbalance=resultSet.getInt("accbalance");
+				netbankid=resultSet.getInt("netbankid");
+			}
+			else 
+				return "incorrectdetails";
+			
+		//	con=DBConnection.getDBConnection();
+			String query="select totalamount from cart where cartid="+cartid;
+			PreparedStatement ps2 = (PreparedStatement) con.prepareStatement(query);
+			ResultSet resultSet2 = ps2.executeQuery();
+			if (resultSet2.next()) {
+				Amount=resultSet2.getInt("totalamount");
+			}
+			if(accbalance>=Amount){
+				newbalance = accbalance-Amount;	
+				System.out.print("updated balance is "+newbalance);
+				String query2 = "UPDATE netbank SET accbalance="+newbalance+" WHERE netbankid="+netbankid;
+				PreparedStatement ps3 = (PreparedStatement) con
+						.prepareStatement(query2);
+				ps3.executeUpdate();
+			}
+			else
+				return "insufficient balance";
+			con.close();
+
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
+	
+		return "successfull!!";
+		
+	}
+	
+	
+	
+	
+	public static String PaymentfromCard(int bankcardid, String Password, int cartid) {
+		Connection con;
+		int Amount=0;
+		try {
+			CardCredentials cc = new CardCredentials();
+			con = DBConnection.getDBConnection();
+			
+			/*To get totalamount from cart table*/
+			String query="select totalamount from cart where cartid="+cartid;
+			PreparedStatement ps = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet resultSet1 = ps.executeQuery();
+			if (resultSet1.next()) {
+				Amount=resultSet1.getInt("totalamount");
+				
+			}
+			
+			
+			
+			
+			
+			String query1 = "select * from bankcards where bankcardid="+bankcardid;
+			PreparedStatement ps1 = (PreparedStatement) con
+					.prepareStatement(query1);
+			ResultSet resultSet = ps1.executeQuery();
+			if (resultSet.next()) {
+				cc.setCardName(resultSet.getString("ownername"));
+				cc.setCardType(resultSet.getString("cardtype"));
+				cc.setDebitBalance(resultSet.getInt("debitbalance"));
+				cc.setCreditLimit(resultSet.getInt("creditlimit"));
+				cc.setPassword(resultSet.getString("password"));
+			}
+			else 
+				return "failure";
+			
+		
+			
+			if ((cc.password).equals(Password)){
+				if((cc.cardType).equalsIgnoreCase("debit")){
+					if((cc.debitBalance)>=Amount){
+						int newdbalance = cc.debitBalance-Amount;
+						System.out.print("updated debit balance is "+newdbalance);
+						String query2 = "UPDATE bankcards SET debitbalance="+newdbalance+" WHERE bankcardid="+bankcardid;
+						PreparedStatement ps2 = (PreparedStatement) con
+								.prepareStatement(query2);
+						ps2.executeUpdate();
+						return "success";
+					}
+					else
+						return "failure";
+				}
+				else if((cc.cardType).equalsIgnoreCase("credit")){
+					if((cc.creditLimit)>=Amount){
+						int newcbalance = cc.creditLimit-Amount;
+						System.out.print("updated credit balance is "+newcbalance);
+						String query3 ="UPDATE bankcards SET creditlimit="+newcbalance+" WHERE bankcardid="+bankcardid;
+						PreparedStatement ps3 = (PreparedStatement) con
+								.prepareStatement(query3);
+						ps3.executeUpdate();
+						return "success";
+					}
+					else
+						return "failure";
+				}
+			}
+			else 
+				return "failure";
+			
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return "failure";
+	
+		
+	}
+	
+	/******************************************/
+	
+	
+	
+	
+	
+	
+	
 
 	// Getting entire bank
 	public static void getBankName(ArrayList<String> bank) {
@@ -1209,7 +1904,7 @@ public class DB {
 		try {
 			con = DBConnection.getDBConnection();
 System.out.println("inside insert add.....");
-			String query1 = "insert into flipkart1.order (addressid) value (?)";
+			String query1 = "insert into flipkart3.order (addressid) value (?)";
 				
 			PreparedStatement ps1 = (PreparedStatement) con
 					.prepareStatement(query1);
@@ -1228,7 +1923,7 @@ System.out.println("inside insert add.....");
 		}
 
 	}
-	public static void getCartItem(int cartid,ArrayList<OrderItem> o)
+	/*public static void getCartItem(int cartid,ArrayList<OrderItem> o)
 	{
 		Connection con;
 		try {
@@ -1260,7 +1955,10 @@ System.out.println("inside insert add.....");
 		}
 		
 		
-	}
+	}*/
+	
+	
+	/*to get products for order summary page from cartitem table*/
 	public static void getProducts(ArrayList<OrderItem> orditm,int cartid)
 	{
 		Connection con;
@@ -1309,6 +2007,117 @@ System.out.println("inside insert add.....");
 		}
 	}
 
+	public static void insertOrder(int userid,int cartid,int addressid)
+	{
+		Connection con;
+		int orderid=0;
+	 int totalamount=0;
+		int shipmentcharges=0;
+		int cnt=0;
+	//	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date(0);
+		//dateFormat.format(date);
+		Date tomorrow = new Date(date.getTime() + (1000 * 60 * 60 * 24));
+		ArrayList<OrderItem> orderitm =new ArrayList<OrderItem>();
+		
+		try {
+			ResultSet resultSet;
+			con = DBConnection.getDBConnection();
+		
+			String query = "select totalamount,shipmentcharges from cart where cartid="+cartid;
+			
+			PreparedStatement ps;
+			ps= (PreparedStatement) con
+					.prepareStatement(query);
+			resultSet = ps.executeQuery();
+			while (resultSet.next())
+			{
+				totalamount=resultSet.getInt("totalamount");
+				shipmentcharges=resultSet.getInt("shipmentcharges");
+				
+			}
+			String query1="select productid,quantity,price,subtotal,deliverydetails from cartitem where cartid="+cartid;
+			ps= (PreparedStatement) con
+					.prepareStatement(query1);
+			resultSet = ps.executeQuery();
+			while (resultSet.next())
+			{
+				OrderItem o= new OrderItem();
+				o.setProductid(resultSet.getInt("productid"));
+				o.setQuantity(resultSet.getInt("quantity"));
+				o.setPrice(resultSet.getInt("price"));
+				o.setSubtotal(resultSet.getInt("subtotal"));
+				o.setDeliverydetails(resultSet.getString("deliverydetails"));
+				orderitm.add(o);
+				cnt++;
+			}
+		String query2="insert into flipkart3.order (userid,totalamount,shipmentcharges,numberofitems,orderdate,addressid) values(?,?,?,?,?,?)";
+	 ps = (PreparedStatement) con.prepareStatement(
+				query2, Statement.RETURN_GENERATED_KEYS); //this statement will return auto increment key
+		ps.setInt(1, userid);
+		ps.setInt(2,totalamount);
+		ps.setInt(3, shipmentcharges);
+		ps.setInt(4, cnt);
+		ps.setDate(5, date);
+		ps.setInt(6, addressid);
+		ps.executeUpdate();
+		ResultSet rs = ps.getGeneratedKeys();
+		if (rs.next()) {
+			orderid= rs.getInt(1);
+		}
+		
+		int j = 0;
+		while (j < orderitm.size()) {
+			
+		
+		
+		String query3="insert into orderitem (orderid,productid,quantity,price,orderstatus,deliverydate,subtotal,deliverydetails) values(?,?,?,?,?,?,?,?)";
+				ps= (PreparedStatement) con.prepareStatement(query3);
+				ps.setInt(1, orderid);
+				ps.setInt(2, orderitm.get(j).getProductid());
+				ps.setInt(3, orderitm.get(j).getQuantity());
+				ps.setInt(4, orderitm.get(j).getPrice());
+				ps.setString(5, "Placed");
+				ps.setDate(6,tomorrow);
+				ps.setInt(7, orderitm.get(j).getSubtotal());
+				ps.setString(8, orderitm.get(j).getDeliverydetails());
+				
+		ps.executeUpdate();
+				
+		/*  Stock Updation  */
+		int stock=0;
+		String query4="select attributevalue from producteav where productid=? and attributeid=8";
+		
+		ps= (PreparedStatement) con.prepareStatement(query4);
+		ps.setInt(1,orderitm.get(j).getProductid());
+		resultSet = ps.executeQuery();
+		
+		while (resultSet.next())
+		{
+			stock=resultSet.getInt("attributevalue");
+		}
+		stock=stock-orderitm.get(j).getQuantity();
+		String query5="update producteav set attributevalue=? where attributeid=8 and productid=?";
+		ps= (PreparedStatement) con.prepareStatement(query5);
+		ps.setInt(1,stock);
+		ps.setInt(2,orderitm.get(j).getProductid());
+		
+		ps.executeUpdate();
+		
+				j++;
+				
+				}
+		}catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
+	}
+	
 	/**********************************************************************************/
 
 	public static UserWho orderLogin(String email, String password) {
@@ -1516,6 +2325,37 @@ System.out.println("inside insert add.....");
 			e.printStackTrace();
 		}
 
+	}
+	
+	
+	
+	//----kavya----Wallet---
+	public static int getamount(int userid)
+	{
+		Connection con;
+		int amount=0;
+		try {
+			con = DBConnection.getDBConnection();
+			System.out.println(userid);
+			String query = "select walletamount from wallet where userid="+userid;
+			PreparedStatement ps2 = (PreparedStatement) con
+					.prepareStatement(query);
+			ResultSet rs2 = ps2.executeQuery();
+			while(rs2.next())
+			{
+				amount = rs2.getInt("walletamount");
+			}
+			System.out.println("Db wallet amount"+amount);
+		
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return amount;
 	}
 
 }

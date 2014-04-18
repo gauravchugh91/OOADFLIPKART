@@ -10,6 +10,14 @@
 		<put-attribute name="body" value="" />
 		<put-attribute name="footer" value="/Footer.jsp" />
 	</definition>
+	
+	<definition name="base1" template="/Base1.jsp">
+		<put-attribute name="title" value="Flipkart" />
+		<put-attribute name="menu" value="/MainHeader.jsp" />
+		<put-attribute name="sidebar" value="" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/Footer.jsp" />
+	</definition>
 
 	<definition name="/showFlipkart.tiles" extends="base">
 		<put-attribute name="body" value="/HomeBody.jsp" />
@@ -29,4 +37,31 @@
 		<put-attribute name="body" value="/HomePage.jsp" />
 	</definition>
 	
+	
+	<definition name="/accountPersonalInfo.tiles" extends="base1">
+	    <put-attribute name ="sidebar" value="/accountVerticalMenu.jsp" />
+	    <put-attribute name="body" value="/personalInfo.jsp" />
+	</definition>
+	
+	
+	<definition name="/updateAccountEmail.tiles" extends="base1">
+	    <put-attribute name ="sidebar" value="/accountVerticalMenu.jsp" />
+	    <put-attribute name="body" value="/updateEmail.jsp" />
+	</definition>
+	<definition name="/deactivateAccount.tiles" extends="base1">
+	    <put-attribute name ="sidebar" value="/accountVerticalMenu.jsp" />
+	    <put-attribute name="body" value="/deactivate.jsp" />
+	</definition>
+	<definition name="/changeAccountPassword.tiles" extends="base1">
+	    <put-attribute name ="sidebar" value="/accountVerticalMenu.jsp" />
+	    <put-attribute name="body" value="/changePassword.jsp" />
+	</definition>
+	<definition name="/addAccountAddress.tiles" extends="base1">
+	    <put-attribute name ="sidebar" value="/accountVerticalMenu.jsp" />
+	    <put-attribute name="body" value="/addAccountAddress.jsp" />
+	</definition>
+	<definition name="/showWallet.tiles" extends="base1">
+	    <put-attribute name ="sidebar" value="/accountVerticalMenu.jsp" />
+	    <put-attribute name="body" value="/showWallet.jsp" />
+	</definition>
 </tiles-definitions>

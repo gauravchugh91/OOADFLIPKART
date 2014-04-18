@@ -68,12 +68,14 @@
         <div style="float: left; width: 20%">
         <h4>Buy Now</h4>
         </div>
-        <s:iterator value="electronicsList">
+        <s:iterator value="electronicsList" step="rowno">
 			
+			<s:if test="%{#rowno<=0}">
 				<div style="float: left; width: 20%">
 				
 					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
-					<s:iterator value="productEAV">
+					<s:iterator value="productEAV" >
+					
 						<s:if test="attributeName=='Image_Path'"> 
 				<img src="<s:property value="attributeValue"/>" height="120" width="120">
 				</s:if>
@@ -83,18 +85,24 @@
 						<b><s:property value="productName" /></font> </b> <br> 
 					</a>
 				</div>
+				</s:if>
 			</s:iterator> 
 			<div style="float: left; width: 20%">
         <h4>Buy Now</h4>
         </div>  
         </div>
         <div class="item" style="width: 100%">
-          <s:iterator value="electronicsList">
+          <div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        <s:iterator value="electronicsList" step="rowno">
 			
+			<s:if test="%{#rowno<=0}">
 				<div style="float: left; width: 20%">
 				
 					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
-					<s:iterator value="productEAV">
+					<s:iterator value="productEAV" >
+					
 						<s:if test="attributeName=='Image_Path'"> 
 				<img src="<s:property value="attributeValue"/>" height="120" width="120">
 				</s:if>
@@ -104,15 +112,24 @@
 						<b><s:property value="productName" /></font> </b> <br> 
 					</a>
 				</div>
-			</s:iterator>          
+				</s:if>
+			</s:iterator> 
+			<div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>         
         </div>
         <div class="item" style="width: 100%">
-          <s:iterator value="electronicsList">
+          <div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        <s:iterator value="electronicsList" step="rowno">
 			
+			<s:if test="%{#rowno<=0}">
 				<div style="float: left; width: 20%">
 				
 					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
-					<s:iterator value="productEAV">
+					<s:iterator value="productEAV" >
+					
 						<s:if test="attributeName=='Image_Path'"> 
 				<img src="<s:property value="attributeValue"/>" height="120" width="120">
 				</s:if>
@@ -122,7 +139,11 @@
 						<b><s:property value="productName" /></font> </b> <br> 
 					</a>
 				</div>
-			</s:iterator>           
+				</s:if>
+			</s:iterator> 
+			<div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>       
         </div>
       </div>
       <a class="left carousel-control" href="#myCarousel2" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
@@ -177,9 +198,9 @@
         <div style="float: left; width: 20%">
         <h4>Buy Now</h4>
         </div>
-        <s:iterator value="booksList">
-			
-				<div style="float: left; width: 20%">
+        <s:iterator value="booksList" step="rowno">
+        	<s:if test="%{#rowno<=0}">
+        		<div style="float: left; width: 20%">
 				
 					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
 					<s:iterator value="productEAV">
@@ -192,33 +213,19 @@
 						<b><s:property value="productName" /></font> </b> <br> 
 					</a>
 				</div>
-			</s:iterator>     
-        </div>
-        <div class="item" style="width: 100%">
-          <s:iterator value="booksList">
-			
-				<div style="float: left; width: 20%">
-				
-					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
-					<s:iterator value="productEAV">
-						<s:if test="attributeName=='Image_Path'"> 
-				<img src="<s:property value="attributeValue"/>" height="120" width="120">
 				</s:if>
-				</s:iterator>
-						<br>
-						<font color="#000000" size="2">
-						<b><s:property value="productName" /></font> </b> <br> 
-					</a>
-				</div>
-			</s:iterator> 
+			</s:iterator>  
 			<div style="float: left; width: 20%">
         <h4>Buy Now</h4>
-        </div>         
+        </div>   
         </div>
         <div class="item" style="width: 100%">
-          <s:iterator value="booksList">
-			
-				<div style="float: left; width: 20%">
+          <div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        <s:iterator value="booksList" step="rowno">
+        	<s:if test="%{#rowno<=0}">
+        		<div style="float: left; width: 20%">
 				
 					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
 					<s:iterator value="productEAV">
@@ -231,7 +238,36 @@
 						<b><s:property value="productName" /></font> </b> <br> 
 					</a>
 				</div>
-			</s:iterator>          
+				</s:if>
+			</s:iterator>  
+			<div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        </div>
+        <div class="item" style="width: 100%">
+          <div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>
+        <s:iterator value="booksList" step="rowno">
+        	<s:if test="%{#rowno<=0}">
+        		<div style="float: left; width: 20%">
+				
+					<a class="button" href="showProduct?productId=<s:property value="productId" />" style="background-color: #ffffff;">
+					<s:iterator value="productEAV">
+						<s:if test="attributeName=='Image_Path'"> 
+				<img src="<s:property value="attributeValue"/>" height="120" width="120">
+				</s:if>
+				</s:iterator>
+						<br>
+						<font color="#000000" size="2">
+						<b><s:property value="productName" /></font> </b> <br> 
+					</a>
+				</div>
+				</s:if>
+			</s:iterator>  
+			<div style="float: left; width: 20%">
+        <h4>Buy Now</h4>
+        </div>     
         </div>
       </div>
       <a class="left carousel-control" href="#myCarousel3" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>

@@ -47,6 +47,11 @@
 </head>
 <body>
 
+<ul>
+<s:iterator value="productPath">
+<li><a href="search?searchBar=<s:property value="categoryName"/>" style="color: black;"><s:property value="catNavName"/></a></li></s:iterator>
+</ul>
+<br>
 	<div style="float: center; width: 100%;">
 
 			<div style="float: right; width: 40%;">
@@ -58,24 +63,50 @@
 					value="<s:property value="product.productId"/>"> <b><s:property
 						value="product.productName" /></b> <br>
 				<s:iterator value="product.productEAV">
-					<br>
-					<s:property value="attributeName" /> : 
-			<s:property value="attributeValue" />
-				</s:iterator>
-				<br> <br> <br> <br>
+				<br>
+				<s:if test="attributeName!='Image_Path'">
 
-				<!-- Button trigger modal -->
+					<s:if test="attributeName=='Discount'">
+						<font color="008000" size="4"> <b><s:property
+									value="attributeName" /> : <s:property value="attributeValue" />%
+								<br> Discount Price: Rs <s:property
+									value="product.discountPrice" /></b>
+						</font>
+					</s:if>
+					<s:elseif test="attributeName=='Offer'">
+						<font color="#008000" size="4"> <b> <s:property
+									value="attributeName" /> : <s:property value="attributeValue" /></b>
+						</font>
+					</s:elseif>
+					<s:else>
+
+						<s:property value="attributeName" /> : 
+			            <s:property value="attributeValue" />
+					</s:else>
+				</s:if>
+			</s:iterator>
+				<br> <br> <br> <br>
+<s:if test="check==1"> 
+<!-- Button trigger modal -->
 				<input type="submit" class="btn btn-primary btn-lg"
 					data-toggle="modal" data-target="#cart" value="Buy Now" id="buyNow" />
 
 			</div>
+			
+</s:if>
+<s:else>
+<div style="background-color: #005387;">
+<font style="color: white;"><label>Out Of Stock</label></font>
+</div>
+</s:else>
+				
 			<div style="float: left; width: 50%;">
 
 				<s:iterator value="product.productEAV">
 					<s:if test="attributeName=='Image_Path'">
 
 						<img src="<s:property value="attributeValue"/>" alt="340x340"
-							height="350" width="350" />
+							height="350" width="200" />
 					</s:if>
 				</s:iterator>
 			</div>

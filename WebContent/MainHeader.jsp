@@ -128,9 +128,9 @@ a:HOVER {
 									</a>
 										<ul class="dropdown-menu">
 											<li class="divider"></li>
-											<li><a href="account">Account</a></li>
+											<li><a href="fetchPersonalInfo">Account</a></li>
 											<li><a href="orders">Orders</a></li>
-											<li><a href="wallet">Wallet</a></li>
+											<li><a href="wallet_action">Wallet</a></li>
 											<li><a href="displaywishlist">Wishlist</a></li>
 											<li><a href="logout">Logout</a></li>
 										</ul></li>
@@ -176,15 +176,23 @@ a:HOVER {
 			<div class="container" style="width: 60%">
 				<ul class="nav navbar-nav">
 					<s:iterator value="rootCategoryList">
-						<li class="dropdown"><a href="#"
-							class="dropdown-toggle js-activated"><s:property
-									value="categoryName" /> <b class="caret"></b></a>
+						<li class="dropdown"><a href="#" class="dropdown-toggle js-activated">
+						<s:property value="categoryName" /> <b class="caret"></b></a>
+						
 							<ul class="dropdown-menu">
 								<s:iterator value="subCategoryList">
 									<li class="divider"></li>
-									<li><a
-										href="browse?category=<s:property value="categoryid"/>"><s:property
-												value="categoryName" /></a></li>
+									<li><a href="browse?category=<s:property value="categoryid"/>">
+									<s:property value="categoryName" /><b class="caret"></b></a>
+									
+									<ul class="dropdown-menu2">
+								<s:iterator value="subCategoryList">
+									<li><a href="browse?category=<s:property value="categoryid"/>">
+									<s:property value="categoryName" /></a></li>
+								</s:iterator>
+								</ul>
+									
+									</li>
 								</s:iterator>
 							</ul></li>
 					</s:iterator>
@@ -217,6 +225,31 @@ a:HOVER {
 							</table>
 							<input type="submit" class="btn btn-primary" value="LOGIN" />
 						</form>
+						
+						
+						<a
+							href="javascript:hideshow(document.getElementById('forgotPass'))"><b>Forgot
+							your password?</b></a>
+							<br/>
+						<div id="forgotPass" style="display:none">
+							<form action="forgotPassword">
+								<table>
+									<tr>
+										<td><label for="email">Enter your Email Address
+												here to receive your password. :</label></td>
+									</tr>
+									<tr>
+									     <td><input type="text" name="email" /></td>
+									</tr>
+								</table>
+							
+							<input type="submit" class="btn btn-primary" value="SEND EMAIL" />
+							</form>
+							<br />
+							</div>
+							<b>Don't have an account? </b> 
+							<a data-dismiss="modal" data-toggle="modal" href="#SignUpModal"><b>SIGN UP!</b></a>
+						
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -236,7 +269,7 @@ a:HOVER {
 				</div>
 
 				<div>
-
+                    <center>
 					<form name="SignUpform" action="signup" method="post">
 						<table>
 							<tr>
@@ -287,7 +320,7 @@ a:HOVER {
 						</table>
 						<input type="submit" class="btn btn-primary" value="Sign Up!" />
 					</form>
-
+                    </center> 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -295,8 +328,7 @@ a:HOVER {
 			</div>
 		</div>
 	</div>
-
-
+	
 	<div class="modal fade" id="cart" tabindex="-1">
 		<div class="modal-dialog" style="width: 900px; height: 500px;">
 			<div class="modal-content" style="height: 500px;">
@@ -328,6 +360,16 @@ a:HOVER {
 			</div>
 		</div>
 	</div>
+<script type="text/javascript">
+         function hideshow(which){
+         if (!document.getElementById)
+           return
+         if (which.style.display=="block")
+         which.style.display="none"
+         else
+         which.style.display="block"
+       }
+     </script>
 
 
 	<script>

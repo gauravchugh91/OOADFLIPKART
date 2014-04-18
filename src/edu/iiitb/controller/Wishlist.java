@@ -8,6 +8,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import edu.iiitb.database.DB;
+import edu.iiitb.model.CategoryDetails;
 import edu.iiitb.model.Product;
 import edu.iiitb.model.WishlistProd;
 
@@ -18,6 +19,20 @@ public class Wishlist extends ActionSupport {
 	int userid;
 	int count_prod = 0;
 	int Productid;
+	
+	// Common Code Start's
+		ArrayList<CategoryDetails> rootCategoryList = new ArrayList<CategoryDetails>();
+
+		public ArrayList<CategoryDetails> getRootCategoryList() {
+			return rootCategoryList;
+		}
+
+		public void setRootCategoryList(ArrayList<CategoryDetails> rootCategoryList) {
+			this.rootCategoryList = rootCategoryList;
+		}
+
+		// Common Code End's
+
 
 	public int getProductid() {
 		return Productid;
@@ -112,7 +127,23 @@ public class Wishlist extends ActionSupport {
 
 	}
 
-	public String DisplayWishlist() {
+	public String DisplayWishlist() throws Exception {
+		
+		// common code start's
+				rootCategoryList = DB.RootCategoryList();
+				for (int i = 0; i < rootCategoryList.size(); i++) {
+					rootCategoryList.get(i)
+							.setSubCategoryList(
+									DB.SubCategoryList(rootCategoryList.get(i)
+											.getCategoryid()));
+					
+					for (int j = 0; j < rootCategoryList.get(i).getSubCategoryList().size(); j++) {
+							rootCategoryList.get(i).getSubCategoryList().get(j).setSubCategoryList(DB.SubCategoryList(rootCategoryList.get(i).getSubCategoryList().get(j).getCategoryid()));
+					}
+					
+				}
+				// common code end's
+		
 		DB connect = new DB();
 		Map<String,Object> session = ActionContext.getContext().getSession();
 		prodlist = connect.DisplayWishlist(Integer.parseInt(session.get("userID").toString()));
@@ -148,7 +179,7 @@ public class Wishlist extends ActionSupport {
 		return "success";
 	}
 
-	public String removeWishlistProd() {
+	public String removeWishlistProd() throws Exception {
 
 		DB connect = new DB();
 		Map<String,Object> session = ActionContext.getContext().getSession();

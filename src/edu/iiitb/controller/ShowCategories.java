@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.opensymphony.xwork2.ActionSupport;
 
 import edu.iiitb.database.DB;
+import edu.iiitb.model.NavigationItem;
 import edu.iiitb.model.category;
 
 
@@ -24,6 +25,7 @@ public class ShowCategories extends ActionSupport {
     int clicked_id;
     int isleaf;
     int level;
+    ArrayList<NavigationItem> navigation;
 	public int getLevel() {
 		return level;
 	}
@@ -60,13 +62,28 @@ public class ShowCategories extends ActionSupport {
 	public String execute() throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("clicked is"+clicked_id);
-		
+		navigation = new ArrayList<NavigationItem>();
 		level = DB.CheckLevel(clicked_id);
-		if(level==1)
+		if(level==0 || level==1 || level==2)
+		{
+		
+		DB.setNavigation(navigation,clicked_id);
+		System.out.println("navigation obtained as:"+navigation);
 		cats = DB.getCategories(clicked_id);
+		}
 		else
+		{
+			
+			DB.setNavigation(navigation,clicked_id);
 		products = DB.getProducts(clicked_id);
+		}
 		return "success";
+	}
+	public ArrayList<NavigationItem> getNavigation() {
+		return navigation;
+	}
+	public void setNavigation(ArrayList<NavigationItem> navigation) {
+		this.navigation = navigation;
 	}
 
 }

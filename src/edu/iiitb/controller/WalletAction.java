@@ -1,8 +1,10 @@
 package edu.iiitb.controller;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import edu.iiitb.database.DB;
+import edu.iiitb.model.CategoryDetails;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -26,7 +28,39 @@ public class WalletAction extends ActionSupport {
 		this.userid = userid;
 	}
 	
-	public String execute(){
+	// Common Code Start's
+		ArrayList<CategoryDetails> rootCategoryList = new ArrayList<CategoryDetails>();
+
+		public ArrayList<CategoryDetails> getRootCategoryList() {
+			return rootCategoryList;
+		}
+
+		public void setRootCategoryList(ArrayList<CategoryDetails> rootCategoryList) {
+			this.rootCategoryList = rootCategoryList;
+		}
+
+		// Common Code End's
+
+	
+	public String execute() throws Exception{
+		
+		// common code start's
+		ArrayList<CategoryDetails> rootCategoryList2 = DB.RootCategoryList();
+		rootCategoryList = rootCategoryList2;
+		for (int i = 0; i < rootCategoryList.size(); i++) {
+			rootCategoryList.get(i)
+					.setSubCategoryList(
+							DB.SubCategoryList(rootCategoryList.get(i)
+									.getCategoryid()));
+			
+			for (int j = 0; j < rootCategoryList.get(i).getSubCategoryList().size(); j++) {
+					rootCategoryList.get(i).getSubCategoryList().get(j).setSubCategoryList(DB.SubCategoryList(rootCategoryList.get(i).getSubCategoryList().get(j).getCategoryid()));
+			}
+			
+		}
+		// common code end's
+
+		
 		Map<String, Object> sessionMap = ActionContext.getContext()
 				.getSession();
 		if(sessionMap.containsKey("userID")) {

@@ -1697,7 +1697,48 @@ int addid=0;
 		
 	}
 	
-	
+	public static void walletUpdate(int userid,int cartid) throws Exception
+	{
+		Connection con;
+		int Amount = 0;
+		int walletamount=0;
+		try {con = DBConnection.getDBConnection();
+		String query1 = "select totalamount from cart where cartid="+cartid;
+		//System.out.print(query1);
+		
+		PreparedStatement ps1 = (PreparedStatement) con.prepareStatement(query1);
+		ResultSet resultSet = ps1.executeQuery();
+		while(resultSet.next())
+		{
+			Amount=resultSet.getInt("totalamount");
+			
+		}
+		String query2 = "select walletamount from wallet where userid="+userid;
+		
+		PreparedStatement ps2 = (PreparedStatement) con.prepareStatement(query2);
+		ResultSet resultSet2 = ps2.executeQuery();
+		while(resultSet2.next())
+		{
+			walletamount=resultSet2.getInt("walletamount");
+			
+		}
+		walletamount=walletamount-Amount;
+		
+		String query3 = "UPDATE wallet SET walletamount="+walletamount+" WHERE userid="+userid;
+		PreparedStatement ps3 = (PreparedStatement) con
+				.prepareStatement(query3);
+		ps3.executeUpdate();
+		
+		
+		}catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+	}
 	
 	
 	public static String PaymentfromCard(int bankcardid, String Password, int cartid) {
@@ -1959,8 +2000,8 @@ System.out.println("inside insert add.....");
 	
 	
 	/*to get products for order summary page from cartitem table*/
-	public static void getProducts(ArrayList<OrderItem> orditm,int cartid)
-	{
+	public static int getProducts(ArrayList<OrderItem> orditm,int cartid)
+	{int totalamount = 0;
 		Connection con;
 		try {
 			con = DBConnection.getDBConnection();
@@ -1994,7 +2035,13 @@ System.out.println("inside insert add.....");
 				orditm.add(o);
 
 			}
-
+			String query2="select totalamount from cart where cartid="+cartid;
+			ps1 = (PreparedStatement) con.prepareStatement(query2);
+			resultSet = ps1.executeQuery();
+			while (resultSet.next()) {
+				totalamount=resultSet.getInt("totalamount");
+			}
+			
 
 			con.close();
 		} catch (ClassNotFoundException e) {
@@ -2005,6 +2052,7 @@ System.out.println("inside insert add.....");
 			e.printStackTrace();
 
 		}
+		return totalamount;
 	}
 
 	public static void insertOrder(int userid,int cartid,int addressid)

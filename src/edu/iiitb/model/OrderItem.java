@@ -3,6 +3,8 @@ package edu.iiitb.model;
 // bean class for orderitem table
 //Author:Chirag Saraiya
 
+//totalamount is included in this for Wallet
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,8 +23,15 @@ public class OrderItem {
  String productname;
  DeliveryAddress da;
  String deliverydetails;
+ int totalamount;
  
- ArrayList<String> validStatuses; 
+ public int getTotalamount() {
+	return totalamount;
+}
+public void setTotalamount(int totalamount) {
+	this.totalamount = totalamount;
+}
+ArrayList<String> validStatuses; 
  
  public ArrayList<String> getValidStatuses() {
 	return validStatuses;

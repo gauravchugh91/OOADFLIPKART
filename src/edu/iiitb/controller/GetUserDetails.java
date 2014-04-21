@@ -18,7 +18,31 @@ public class GetUserDetails {
 	 int userid;
 	 ArrayList<OrderItem> orditm=new ArrayList<OrderItem>();
 	 int cartid;
-	 public int getCartid() {
+	 int walletamount=0;
+	 int walletflag=0;
+	
+	 
+	 public int getWalletflag() {
+		return walletflag;
+	}
+
+
+	public void setWalletflag(int walletflag) {
+		this.walletflag = walletflag;
+	}
+
+
+	public int getWalletamount() {
+		return walletamount;
+	}
+
+
+	public void setWalletamount(int walletamount) {
+		this.walletamount = walletamount;
+	}
+
+
+	public int getCartid() {
 		return cartid;
 	}
 
@@ -98,24 +122,28 @@ public class GetUserDetails {
 	public String execute() throws Exception {
 		 sessionMap = (SessionMap<String, Object>) ActionContext.getContext().getSession();
 		 userid=Integer.parseInt(sessionMap.get("userID").toString());
-			if(userid!=-1)
-				
-			{ 
-				//if(sessionMap.containsKey("login"))
+		 System.out.println("user details.......");
+			if(userid!=-1) 	
 				{
 				//isLogin="true";
 			  
 			 //if(isLogin.equals("true"))
-			 {
+			 
 				// userid=Integer.parseInt(sessionMap.get("userID").toString());
 				emailid=(String) sessionMap.get("email");
-				System.out.println("user id="+sessionMap.get("userID"));
+				System.out.println("user id-----------="+sessionMap.get("userID"));
 				DB.getAddress(addr,userid);
 				cartid=(int)sessionMap.get("cartid");
-				DB.getProducts(orditm,cartid);
-			 }
+			int totalamount=	DB.getProducts(orditm,cartid);
+			System.out.println("Total::"+totalamount);
+				walletamount = DB.getamount(Integer.parseInt(sessionMap.get("userID").toString()));
+				System.out.println("Wallet::::"+walletamount);
+				if(walletamount>totalamount)
+					walletflag=1;
+			
 				}
-			}
+			System.out.println("wallet f::"+walletflag);
+			 
 			System.out.println("I m here");
 			DB.getBankName(bank);
 			

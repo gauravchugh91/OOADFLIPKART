@@ -140,7 +140,7 @@ public class OrderLogin extends ActionSupport  {
 		System.out.println(getEmail());
 		System.out.println("checked value"+my_checkbox);
 		DB.getBankName(bank);
-		//* checks chek box for existing Users
+		//* checks check box for existing Users
 		if (my_checkbox==true){
 			UserWho sysUser = DB.whoIsLogin(selectionModifier);
 			System.out.println(sysUser.getUserID() +"***"+sysUser.getPassword());

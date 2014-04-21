@@ -252,12 +252,16 @@
 		    <result name="success" type="tiles">/updateAccountEmail.tiles</result>
 		    <result name="error" type="tiles">updateAccountEmail.tiles</result> 
 		</action>
-		<action name="wallet_action" 
+		<action name="walletpay" class="edu.iiitb.controller.PayFromWallet" 
+            method="execute">
+            <result name="success" >/success.jsp</result>
+      </action>
+      
+<action name="wallet_action" 
             class="edu.iiitb.controller.WalletAction" 
             method="execute">
             <result name="success" type="tiles">/showWallet.tiles</result>
       </action>
-
 	</package>
 
 </struts>

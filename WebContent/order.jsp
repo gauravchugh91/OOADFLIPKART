@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>flipkart</title>
+<title>Flipkart</title>
 <link rel="stylesheet" type="text/css"
 	href="assets/css/smoothness/jquery-ui-1.10.4.custom.css">
 <link rel="stylesheet" type="text/css" href="assets/css/creditcard.css">
@@ -95,7 +95,7 @@
 	border-color: #ffd700;
 } */
 #accordion {
-	width: 90%;
+	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -113,6 +113,9 @@
 						});
 						});
 
+	
+	
+	
 						//ACCORDION
 <%--$("#accordion").accordion({
 				header : ".accClass"
@@ -271,6 +274,21 @@ checkvalidate(a,b,c,d);
 			});
 
 		});
+		
+		$("#wallet_pay").click(function() {
+		
+			$.ajax({
+				type : 'POST',
+				url : 'walletpay',
+
+			});
+
+		});
+
+		
+		
+		
+		
 	});
 </script>
 <!-- 
@@ -288,10 +306,9 @@ $('#ff').form({
 <body>
 
 <div style="background-color: #005387;">
-						<a class="navbar-right" style="padding-top: 5%"
-							href="showHomePage"><img src="assets/images/flip.png" /></a>
-					</div>
-
+<a href="showHomePage"><img src="assets/images/flip.png" /></a>
+</div>
+<br><br><br>
 	<!-----------------------Accordian Division   --------------------------->
 	<div id="accordion">
 		<h2 id="section1" class="accClass">
@@ -417,6 +434,7 @@ $('#ff').form({
 					<li><a href="#tabs-1">NET BANKING</a></li>
 					<li><a href="#tabs-2">CREDIT CARD</a></li>
 					<li><a href="#tabs-3">DEBIT CARD</a></li>
+					<li><a href="#tabs-4">WALLET</a></li>
 				</ul>
 				<!-- <div id="tabs-1"></div> -->
 				<div id="tabs-1">
@@ -501,7 +519,19 @@ $('#ff').form({
 					</section>
 
 				</div>
-
+				<div id="tabs-4">
+			 	<s:if test="walletflag==1"> 
+			 	<h3>Wallet Amount:</h3><s:property value="walletamount"/>
+				
+				<br>
+				<br>
+				<br>
+				<button id="wallet_pay" style="height: 25px; width: 400px">PAY</button>
+			 </s:if> 
+			<s:else>
+				You Dont have Enough Amount In Your Wallet
+			</s:else>
+				</div>
 			</div>
 			<br> <br> <br> <br> <br> <br> <br>
 			<br> <br>

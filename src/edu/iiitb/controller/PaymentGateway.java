@@ -1,5 +1,6 @@
 package edu.iiitb.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -15,6 +16,18 @@ public class PaymentGateway {
 	public String password;
 	public int Amount;
 	public int userid;
+	int statusflag=0;
+	public int getStatusflag() {
+		return statusflag;
+	}
+
+
+	public void setStatusflag(int statusflag) {
+		this.statusflag = statusflag;
+	}
+
+
+	
 	
 	public int getUserid() {
 		return userid;
@@ -83,17 +96,19 @@ public class PaymentGateway {
 	}
 
 
-	public String execute() {
+	public String execute() throws SQLException {
 		System.out.println(getPassword());
 		System.out.println(getBankcardid());
 		
-		System.out.println("Debit card:::");
+		System.out.println("Debit card:::"+bankcardid+password+(int)sessionMap.get("cartid"));
+		
 		String status= DB.PaymentfromCard(bankcardid, password, (int)sessionMap.get("cartid"));
 		System.out.println("Status::"+status);
 		
 		System.out.println("Unregistered"+(int)sessionMap.get("addrid"));
 		if(status.equals("success"))
-		{
+		{	
+			statusflag=1;
 			
 			if (sessionMap.containsKey("unregistered"))
 			{
@@ -103,9 +118,13 @@ public class PaymentGateway {
 			{
 				DB.insertOrder((int)sessionMap.get("userID"),(int)sessionMap.get("cartid"),(int)sessionMap.get("addrid"));
 			}
+			
+			return "success";
 		}
 			
-		return status;
+		statusflag=2;
+		System.out.println("Statusflag::"+statusflag);
+		return "success";
 		/***
 		 * 
 		 * stock should be updated here................

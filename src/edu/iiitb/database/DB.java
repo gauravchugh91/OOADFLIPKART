@@ -501,12 +501,35 @@ public class DB {
 					.prepareStatement(query);
 			ResultSet resultSet = ps.executeQuery();
 			ArrayList<Product> products = new ArrayList<Product>();
-			while (resultSet.next()) {
+			if (resultSet.next()) {
+				
+				do{
 				Product product = new Product();
 				product.setProductId(resultSet.getInt("productid"));
 				product.setCategoryId(resultSet.getInt("categoryid"));
 				product.setProductName(resultSet.getString("productname"));
 				products.add(product);
+				}while(resultSet.next());
+				
+			}
+			else
+			{
+				String query1 = "select * from product p, category c1,category c2 where c2.categoryid = c1.parentid  and c1.categoryid = p.categoryid and c2.categoryid =  "
+						+ category;
+				PreparedStatement ps1 = (PreparedStatement) con
+						.prepareStatement(query1);
+				ResultSet resultSet1 = ps1.executeQuery();
+				if (resultSet1.next()) {
+					
+					do{
+					Product product = new Product();
+					product.setProductId(resultSet1.getInt("productid"));
+					product.setCategoryId(resultSet1.getInt("categoryid"));
+					product.setProductName(resultSet1.getString("productname"));
+					products.add(product);
+					}while(resultSet1.next());
+					
+				}
 			}
 			con.close();
 			return products;
@@ -515,6 +538,7 @@ public class DB {
 		}
 		return null;
 	}
+
 
 	// ruchita's code end
 	/********** RISHI **********/
@@ -543,7 +567,7 @@ public class DB {
 			ResultSet resultSet1 = cs.executeQuery();
 			System.out.println("prev_Customer successfully executed!");
 
-			// User has a flipcart account.
+			// User has a flipkart account.
 
 			if (resultSet.next()) {
 				System.out.println("Email already taken by "
@@ -1661,7 +1685,7 @@ int addid=0;
 				netbankid=resultSet.getInt("netbankid");
 			}
 			else 
-				return "incorrectdetails";
+				return "Incorrect details Please fill the details Correctly";
 			
 		//	con=DBConnection.getDBConnection();
 			String query="select totalamount from cart where cartid="+cartid;
@@ -1670,6 +1694,7 @@ int addid=0;
 			if (resultSet2.next()) {
 				Amount=resultSet2.getInt("totalamount");
 			}
+			
 			if(accbalance>=Amount){
 				newbalance = accbalance-Amount;	
 				System.out.print("updated balance is "+newbalance);
@@ -1679,7 +1704,7 @@ int addid=0;
 				ps3.executeUpdate();
 			}
 			else
-				return "insufficient balance";
+				return "Insufficient Balance In Your Account ";
 			con.close();
 
 			
@@ -1693,7 +1718,7 @@ int addid=0;
 		}
 		
 	
-		return "successfull!!";
+		return "Transaction Successfull";
 		
 	}
 	
@@ -1748,7 +1773,7 @@ int addid=0;
 			CardCredentials cc = new CardCredentials();
 			con = DBConnection.getDBConnection();
 			
-			/*To get totalamount from cart table*/
+			/*To get total amount from cart table*/
 			String query="select totalamount from cart where cartid="+cartid;
 			PreparedStatement ps = (PreparedStatement) con
 					.prepareStatement(query);
@@ -1924,8 +1949,10 @@ int addid=0;
 			 if(rs==1) { query =
 			 "select userid from customer where email='"+email+"'";
 			 PreparedStatement ps2 = (PreparedStatement) con
-			 .prepareStatement(query); ResultSet rs2 = ps2.executeQuery();
-			 while(rs2.next()) { userid = rs2.getInt("userid"); }
+			 .prepareStatement(query); 
+			 ResultSet rs2 = ps2.executeQuery();
+			 while(rs2.next()) 
+			 { userid = rs2.getInt("userid"); }
 			  System.out.println("user id inserted"+userid); }
 			
 		} catch (ClassNotFoundException e) {
@@ -2055,9 +2082,9 @@ System.out.println("inside insert add.....");
 		return totalamount;
 	}
 
-	public static void insertOrder(int userid,int cartid,int addressid)
+	public static void insertOrder(int userid,int cartid,int addressid) throws SQLException
 	{
-		Connection con;
+		Connection con = null;
 		int orderid=0;
 	 int totalamount=0;
 		int shipmentcharges=0;
@@ -2155,6 +2182,18 @@ System.out.println("inside insert add.....");
 				j++;
 				
 				}
+			System.out.println("Cart Id:::"+cartid);
+			
+		String query6="update cart set totalamount=0,shipmentcharges=0 where cartid="+cartid;
+		ps= (PreparedStatement) con.prepareStatement(query6);
+		ps.executeUpdate();
+		
+		
+		String query7="delete from cartitem where cartid="+cartid;
+		ps= (PreparedStatement) con.prepareStatement(query7);
+		ps.executeUpdate();
+
+		
 		}catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -2163,7 +2202,8 @@ System.out.println("inside insert add.....");
 			e.printStackTrace();
 
 		}
-		
+	
+		con.close();
 	}
 	
 	/**********************************************************************************/

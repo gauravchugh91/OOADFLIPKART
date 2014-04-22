@@ -9,14 +9,22 @@
 </head>
 <body>
 <h1>payment</h1>
+	<s:if test="statusflag!=1">
 	<s:form  action="pay" method ="post" >
   <%-- <s:textfield label="Password" name="password" /> --%>
   <label for="Password" id="label">Password</label>
 	<input type="password" id="password" name="password"  onfocus="inputFocus(this)"
 				onblur="inputBlur(this)" /> <br /> 
-  <%-- <s:property value="bankcardid"/> --%>
+  <%-- <s:property value="bank card id"/> --%>
   <s:hidden name="bankcardid" value="%{bankcardid}"/> 
   <s:submit />
-</s:form>
+</s:form>	
+<s:if test="statusflag==2">
+<h2>Please Enter Valid Details</h2>
+</s:if>
+</s:if>
+<s:else>
+<h2> Payment Successful </h2>
+</s:else>
 </body>
 </html>

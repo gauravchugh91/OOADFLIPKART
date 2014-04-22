@@ -18,6 +18,10 @@
 <script src="assets/js/jquery.js"></script>
 <script src="assets/js/jquery-ui-1.10.4.custom.min.js"></script>
 
+<script type="text/javascript">
+window.history.forward();
+function noBack () {window.history.forward();}
+</script>
 
 <script>
 	$(function() {
@@ -303,7 +307,8 @@ $('#ff').form({
 </script>
  -->
 </head>
-<body>
+
+<body onload="noBack();" onpageshow="if (event.persisted) noBack();" onunload="">
 
 <div style="background-color: #005387;">
 <a href="showHomePage"><img src="assets/images/flip.png" /></a>
@@ -316,10 +321,14 @@ $('#ff').form({
 		</h2>
 		<div>
 			EMAIL ID
-			<s:if test="userid!=-1">
+			<s:if test= "userid > 0" >
 				<s:property value="emailid" />
 			</s:if>
+			
 			<s:else>
+			<s:if test="existingemail==1">
+			<h3> Email Already Exist Please Enter Another Email Address !!!! </h3> 
+			</s:if>
 				<form id="ff" action="Orlogin" method="post">
 
 					<label for="Emailid">Email Address</label> <input type="text"

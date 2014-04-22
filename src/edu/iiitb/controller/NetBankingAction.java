@@ -1,5 +1,6 @@
+/*Author  ::Kavya Sree
+Action For NetBanking*/
 package edu.iiitb.controller;
-
 import java.util.Map;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -13,6 +14,15 @@ public class NetBankingAction {
 	public int Amount;
 	public int flag;
 	public String errormessage="";
+	int errormessageflag=0;  //Error Message Flag for Jsp page Display
+	public int getErrormessageflag() {
+		return errormessageflag;
+	}
+
+	public void setErrormessageflag(int errormessageflag) {
+		this.errormessageflag = errormessageflag;
+	}
+
 	int cartid;
 	public int getCartid() {
 		return cartid;
@@ -86,7 +96,19 @@ public class NetBankingAction {
 		System.out.println(getAccountpass());
 	cartid=(int)sessionMap.get("cartid");
 		errormessage= DB.Payfromnetbank(getAccountid(), getAccountpass(), cartid);
-		
+		System.out.println("Error messagae:"+errormessage);
+		if(errormessage.equals("Transaction Successfull"))
+		{	errormessageflag=1;
+			
+			if (sessionMap.containsKey("unregistered"))
+			{
+			DB.insertOrder((int)sessionMap.get("unregistered"),(int)sessionMap.get("cartid"),(int)sessionMap.get("addrid"));
+			}
+			else
+			{
+				DB.insertOrder((int)sessionMap.get("userID"),(int)sessionMap.get("cartid"),(int)sessionMap.get("addrid"));
+			}
+		}
 		
 		/*if(errormessage.equals("successfull!!"))
 		{
@@ -117,11 +139,5 @@ public class NetBankingAction {
 	public void setErrormessage(String errormessage) {
 		this.errormessage = errormessage;
 	}
-	
-
-
-
-	
-	
 	
 }

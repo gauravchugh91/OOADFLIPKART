@@ -146,13 +146,26 @@ public class ShowProduct {
 					}
 				}
 			}
-			else if (producteav.getAttributeName().equalsIgnoreCase("Stock"))
+			else if(producteav.getAttributeName().equals("Threshold"))
 			{
-				if(Integer.parseInt(producteav.getAttributeValue())==0)
-				{
-				    check=0;	
-				}
-			}
+							
+							int thershold= Integer.parseInt(producteav.getAttributeValue());
+							System.out.println("threshold"+thershold);
+							Iterator itr1= product.getProductEAV().iterator();
+							while(itr1.hasNext())
+							{
+								ProductEAV producteav1= (ProductEAV)itr1.next();
+								
+								if(producteav1.getAttributeName().equals("Stock"))
+								{
+									if(Integer.parseInt(producteav1.getAttributeValue())<thershold)
+									{
+										check=0;	
+									}
+								}
+							}
+						}
+
 			
 		}
 		

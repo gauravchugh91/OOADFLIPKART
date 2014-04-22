@@ -188,7 +188,7 @@ a:HOVER {
 									<ul class="dropdown-menu2">
 								<s:iterator value="subCategoryList">
 									<li><a href="browse?category=<s:property value="categoryid"/>">
-									<s:property value="categoryName" /></a></li>
+									<font style="color: black;"><s:property value="categoryName" /></font></a></li>
 								</s:iterator>
 								</ul>
 									

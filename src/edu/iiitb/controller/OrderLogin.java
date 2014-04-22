@@ -21,7 +21,28 @@ public class OrderLogin extends ActionSupport  {
 	public String email;
 	public String password;
 	ArrayList<DeliveryAddress> addr;
+	int existingemail=0;
+	int userid=0;
 	
+	public int getUserid() {
+		return userid;
+	}
+
+
+	public void setUserid(int userid) {
+		this.userid = userid;
+	}
+
+
+	public int getExistingemail() {
+		return existingemail;
+	}
+
+
+	public void setExistingemail(int existingemail) {
+		this.existingemail = existingemail;
+	}
+
 	ArrayList<OrderItem> orditm =new ArrayList<OrderItem>();
 	int cartid;
 	
@@ -145,19 +166,24 @@ public class OrderLogin extends ActionSupport  {
 			UserWho sysUser = DB.whoIsLogin(selectionModifier);
 			System.out.println(sysUser.getUserID() +"***"+sysUser.getPassword());
 		
+			
+			
 			if (sysUser.equals(null)){
 				addActionError("Incorrect email address/password.");	
 				return "failure";
 				// 
 			}else {
+				userid=sysUser.getUserID();
+				System.out.println("User id------>"+userid);
 				/* Setting userID in session for existing account user on place order page */
-				
+				System.out.println("User id^^^^^"+userid);
 				sessionMap.put("userID", sysUser.getUserID());
+				
 				cartid=(int)sessionMap.get("cartid");
 				DB.getProducts(orditm,cartid);
 				DB.getAddress(addr,sysUser.getUserID());
 				emailid=sysUser.getEmail();
-				isLogin="true";    //flag to display Login Form on Jsp pages
+				isLogin="true";    //flag to display Login Form on order.jsp page
 				return "success";
 			}
 			
@@ -167,9 +193,17 @@ public class OrderLogin extends ActionSupport  {
 			
 			System.out.println("check box");
 			//insert into customer
-			int userid = DB.Unreguser(email);
+			userid = DB.Unreguser(email);
+			System.out.println("Userid--------->"+userid);
+			if(userid==0)
+			{
+				System.out.println("User id inside orderlogin"+userid);
+				existingemail=1;
+				return "success";
+				
+			}
 			emailid=email;
-			//isLogin="false"; //flag tocheck on JSP whether user is logedin or not
+			//isLogin="false"; //flag to check on JSP whether user is logedin or not
 		// for unregistered user set email session
 			sessionMap.put("unregistered", userid); 
 			/* Getting Cart item for Order Summery page*/

@@ -64,7 +64,7 @@
 						value="product.productName" /></b> <br>
 				<s:iterator value="product.productEAV">
 				<br>
-				<s:if test="attributeName!='Image_Path'">
+				<s:if test="attributeName!='Image_Path' and attributeName!='Threshold' and attributeName!='Stock'">
 
 					<s:if test="attributeName=='Discount'">
 						<font color="008000" size="4"> <b><s:property
@@ -90,15 +90,11 @@
 <!-- Button trigger modal -->
 				<input type="submit" class="btn btn-primary btn-lg"
 					data-toggle="modal" data-target="#cart" value="Buy Now" id="buyNow" />
-
-			</div>
-			
 </s:if>
 <s:else>
-<div style="background-color: #005387;">
-<font style="color: white;"><label>Out Of Stock</label></font>
-</div>
+<font style="color: white; background-color: #005387;"><label>Out Of Stock</label></font>
 </s:else>
+</div>
 				
 			<div style="float: left; width: 50%;">
 

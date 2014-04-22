@@ -139,7 +139,7 @@
 		</action>
 		<action name="pay" class="edu.iiitb.controller.PaymentGateway"
 			method="execute">
-			<result name="success">/success.jsp</result>
+			<result name="success">/paymentgateway.jsp</result>
 			<result name="failure">/failure.jsp</result>
 		</action>
 		
